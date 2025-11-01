@@ -3,6 +3,10 @@
  * Define all products available for sale
  */
 
+// Stock values can be configured via environment variables
+const DEFAULT_STOCK = process.env.DEFAULT_STOCK || 10;
+const VCC_STOCK = process.env.VCC_STOCK || 5;
+
 const products = {
   premiumAccounts: [
     {
@@ -10,28 +14,28 @@ const products = {
       name: 'Netflix Premium Account (1 Month)',
       price: 1,
       description: 'Full HD streaming, 4 screens',
-      stock: 10
+      stock: DEFAULT_STOCK
     },
     {
       id: 'spotify',
       name: 'Spotify Premium Account (1 Month)',
       price: 1,
       description: 'Ad-free music, offline download',
-      stock: 10
+      stock: DEFAULT_STOCK
     },
     {
       id: 'youtube',
       name: 'YouTube Premium Account (1 Month)',
       price: 1,
       description: 'Ad-free videos, background play',
-      stock: 10
+      stock: DEFAULT_STOCK
     },
     {
       id: 'disney',
       name: 'Disney+ Premium Account (1 Month)',
       price: 1,
       description: 'HD streaming, all content',
-      stock: 10
+      stock: DEFAULT_STOCK
     }
   ],
   virtualCards: [
@@ -40,14 +44,14 @@ const products = {
       name: 'Virtual Credit Card - Basic',
       price: 1,
       description: 'Pre-loaded $10 balance',
-      stock: 5
+      stock: VCC_STOCK
     },
     {
       id: 'vcc-standard',
       name: 'Virtual Credit Card - Standard',
       price: 1,
       description: 'Pre-loaded $25 balance',
-      stock: 5
+      stock: VCC_STOCK
     }
   ]
 };

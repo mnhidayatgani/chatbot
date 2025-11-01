@@ -14,6 +14,9 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+# Repository URL (can be customized)
+REPO_URL="${CHATBOT_REPO_URL:-https://github.com/benihutapea/chatbot.git}"
+
 echo "📦 Updating system packages..."
 apt update && apt upgrade -y
 
@@ -42,7 +45,7 @@ apt install -y git
 echo "✅ Installation complete!"
 echo ""
 echo "Next steps:"
-echo "1. Clone the repository: git clone https://github.com/benihutapea/chatbot.git"
+echo "1. Clone the repository: git clone ${REPO_URL}"
 echo "2. Navigate to directory: cd chatbot"
 echo "3. Install dependencies: PUPPETEER_SKIP_DOWNLOAD=true npm install"
 echo "4. Start the bot: pm2 start index.js --name whatsapp-bot"

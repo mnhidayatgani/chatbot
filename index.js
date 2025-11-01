@@ -92,9 +92,9 @@ client.on('message', async (message) => {
     } catch (error) {
         console.error('❌ Error handling message:', error);
         
-        // Send error message to customer
+        // Send user-friendly error message with support contact
         try {
-            await message.reply('⚠️ Sorry, something went wrong. Please try again or type *menu* to start over.');
+            await message.reply('⚠️ Sorry, something went wrong processing your request.\n\nPlease try again or type *support* for help.\n\nIf the problem persists, please contact our support team.');
         } catch (replyError) {
             console.error('❌ Error sending error message:', replyError);
         }
