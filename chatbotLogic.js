@@ -94,6 +94,10 @@ class ChatbotLogic {
       return this.handleEditProduct(customerId, sanitizedMessage);
     }
 
+    if (normalizedMessage.startsWith("/settings")) {
+      return this.handleAdminSettings(customerId, normalizedMessage);
+    }
+
     // Handle customer commands
     if (normalizedMessage === "history" || normalizedMessage === "/history") {
       return this.handleOrderHistory(customerId);
@@ -1336,6 +1340,159 @@ class ChatbotLogic {
     } else {
       return result.message;
     }
+  }
+
+  /**
+   * Admin Command: /settings
+   * View and configure system settings
+   * Format: /settings (view all) or /settings <key> <value> (update)
+   */
+  async handleAdminSettings(adminId, fullMessage) {
+    if (!InputValidator.isAdmin(adminId)) {
+      this.logger.logSecurity(
+        adminId,
+        "unauthorized_admin_access",
+        "not_in_whitelist"
+      );
+      return UIMessages.unauthorized();
+    }
+
+    const parts = fullMessage.split(/\s+/);
+
+    // View all settings
+    if (parts.length === 1) {
+      return this.showAllSettings();
+    }
+
+    // Show help
+    if (parts.length === 2 && parts[1] === "help") {
+      return this.showSettingsHelp();
+    }
+
+    // Update setting
+    if (parts.length === 3) {
+      const [, key, value] = parts;
+      const { updateSetting } = require("./config");
+      const result = updateSetting(key, value);
+
+      if (result.success) {
+        // Log admin action
+        this.logger.logAdminAction(adminId, "settings_update", key, {
+          oldValue: result.oldValue,
+          newValue: result.newValue,
+        });
+
+        return (
+          `✅ *Setting Berhasil Diupdate*\n\n` +
+          `🔧 *Key:* ${result.key}\n` +
+          `📝 *Nilai Lama:* ${result.oldValue}\n` +
+          `📝 *Nilai Baru:* ${result.newValue}\n` +
+          `⏰ *Diupdate:* ${new Date().toLocaleString("id-ID")}`
+        );
+      } else {
+        return result.message;
+      }
+    }
+
+    // Invalid format
+    return (
+      `❌ *Format Salah*\n\n` +
+      `*Cara menggunakan:*\n` +
+      `• /settings - Lihat semua settings\n` +
+      `• /settings help - Lihat panduan\n` +
+      `• /settings <key> <value> - Update setting\n\n` +
+      `*Contoh:*\n` +
+      `/settings usdToIdrRate 16000\n` +
+      `/settings maintenanceMode true`
+    );
+  }
+
+  /**
+   * Show all system settings
+   */
+  showAllSettings() {
+    const { getAllSettings } = require("./config");
+    const settings = getAllSettings();
+
+    let message = "⚙️ *SYSTEM SETTINGS*\n\n";
+
+    message += "💱 *Currency & Pricing:*\n";
+    message += `• usdToIdrRate: ${settings.usdToIdrRate}\n`;
+    message += `• currency: ${settings.currency}\n\n`;
+
+    message += "⏱️ *Session & Rate Limit:*\n";
+    message += `• sessionTimeout: ${settings.sessionTimeout} minutes\n`;
+    message += `• maxMessagesPerMinute: ${settings.maxMessagesPerMinute}\n\n`;
+
+    message += "🏪 *Business Info:*\n";
+    message += `• shopName: ${settings.shopName}\n`;
+    message += `• supportEmail: ${settings.supportEmail}\n`;
+    message += `• supportWhatsapp: ${settings.supportWhatsapp}\n\n`;
+
+    message += "📦 *Delivery & Stock:*\n";
+    message += `• autoDeliveryEnabled: ${settings.autoDeliveryEnabled}\n`;
+    message += `• lowStockThreshold: ${settings.lowStockThreshold}\n\n`;
+
+    message += "🔧 *System:*\n";
+    message += `• maintenanceMode: ${settings.maintenanceMode}\n`;
+    message += `• welcomeMessageEnabled: ${settings.welcomeMessageEnabled}\n`;
+    message += `• logLevel: ${settings.logLevel}\n\n`;
+
+    message += "━━━━━━━━━━━━━━━━━━\n\n";
+    message += "💡 *Tips:*\n";
+    message += "• Ketik /settings help untuk panduan\n";
+    message += "• Ketik /settings <key> <value> untuk update";
+
+    return message;
+  }
+
+  /**
+   * Show settings help guide
+   */
+  showSettingsHelp() {
+    let message = "📖 *SETTINGS GUIDE*\n\n";
+
+    message += "🔑 *Available Settings:*\n\n";
+
+    message += "💱 *Currency & Pricing:*\n";
+    message += "• usdToIdrRate - Kurs USD ke IDR\n";
+    message += "  Contoh: /settings usdToIdrRate 16000\n\n";
+
+    message += "⏱️ *Session & Rate Limit:*\n";
+    message += "• sessionTimeout - Timeout session (menit)\n";
+    message += "  Contoh: /settings sessionTimeout 45\n";
+    message += "• maxMessagesPerMinute - Max pesan per menit\n";
+    message += "  Contoh: /settings maxMessagesPerMinute 30\n\n";
+
+    message += "🏪 *Business Info:*\n";
+    message += "• shopName - Nama toko\n";
+    message += '  Contoh: /settings shopName "Toko Voucher"\n';
+    message += "• supportEmail - Email support\n";
+    message += "  Contoh: /settings supportEmail support@toko.com\n";
+    message += "• supportWhatsapp - Nomor WA support\n";
+    message += "  Contoh: /settings supportWhatsapp 628123456789\n\n";
+
+    message += "📦 *Delivery & Stock:*\n";
+    message += "• autoDeliveryEnabled - Auto kirim produk (true/false)\n";
+    message += "  Contoh: /settings autoDeliveryEnabled true\n";
+    message += "• lowStockThreshold - Batas stok rendah\n";
+    message += "  Contoh: /settings lowStockThreshold 10\n\n";
+
+    message += "🔧 *System:*\n";
+    message += "• maintenanceMode - Mode maintenance (true/false)\n";
+    message += "  Contoh: /settings maintenanceMode false\n";
+    message += "• welcomeMessageEnabled - Welcome message (true/false)\n";
+    message += "  Contoh: /settings welcomeMessageEnabled true\n";
+    message += "• logLevel - Level logging (info/debug/error)\n";
+    message += "  Contoh: /settings logLevel debug\n\n";
+
+    message += "━━━━━━━━━━━━━━━━━━\n\n";
+    message += "⚠️ *Perhatian:*\n";
+    message += "• Setting bersifat temporary (hilang saat restart)\n";
+    message += "• Untuk permanent, edit file .env\n";
+    message += "• Restart bot setelah edit .env";
+
+    return message;
   }
 
   /**

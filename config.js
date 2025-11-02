@@ -7,6 +7,42 @@
 const DEFAULT_STOCK = process.env.DEFAULT_STOCK || 10;
 const VCC_STOCK = process.env.VCC_STOCK || 5;
 
+// System settings (configurable at runtime)
+const systemSettings = {
+  // Currency settings
+  usdToIdrRate: parseInt(process.env.USD_TO_IDR_RATE) || 15800,
+  currency: "IDR",
+
+  // Session settings
+  sessionTimeout: parseInt(process.env.SESSION_TIMEOUT) || 30, // minutes
+
+  // Rate limiting
+  maxMessagesPerMinute: parseInt(process.env.MAX_MESSAGES_PER_MINUTE) || 20,
+
+  // Business settings
+  shopName: process.env.SHOP_NAME || "Premium Shop",
+  supportEmail: process.env.SUPPORT_EMAIL || "support@premiumshop.com",
+  supportWhatsapp: process.env.SUPPORT_WHATSAPP || "Nomor ini",
+
+  // Auto-delivery settings
+  autoDeliveryEnabled: process.env.AUTO_DELIVERY === "true",
+
+  // Maintenance mode
+  maintenanceMode: process.env.MAINTENANCE_MODE === "true",
+  maintenanceMessage:
+    process.env.MAINTENANCE_MESSAGE ||
+    "🔧 Sistem sedang maintenance. Mohon coba lagi nanti.",
+
+  // Welcome message
+  welcomeMessageEnabled: process.env.WELCOME_MESSAGE_ENABLED !== "false",
+
+  // Stock warnings
+  lowStockThreshold: parseInt(process.env.LOW_STOCK_THRESHOLD) || 5,
+
+  // Logging
+  logLevel: process.env.LOG_LEVEL || "info",
+};
+
 const products = {
   premiumAccounts: [
     {
@@ -353,6 +389,64 @@ function updateProduct(productId, updates) {
   };
 }
 
+/**
+ * Get system setting value
+ * @param {string} key - Setting key
+ * @returns {any} Setting value
+ */
+function getSetting(key) {
+  return systemSettings[key];
+}
+
+/**
+ * Update system setting
+ * @param {string} key - Setting key
+ * @param {any} value - New value
+ * @returns {Object} Result with success status
+ */
+function updateSetting(key, value) {
+  if (!(key in systemSettings)) {
+    return {
+      success: false,
+      message: `❌ Setting "${key}" tidak ditemukan.`,
+    };
+  }
+
+  const oldValue = systemSettings[key];
+
+  // Type validation and conversion
+  if (typeof oldValue === "number") {
+    const numValue = parseInt(value);
+    if (isNaN(numValue)) {
+      return {
+        success: false,
+        message: `❌ Nilai harus berupa angka.`,
+      };
+    }
+    systemSettings[key] = numValue;
+  } else if (typeof oldValue === "boolean") {
+    systemSettings[key] = value === "true" || value === true;
+  } else {
+    systemSettings[key] = value;
+  }
+
+  return {
+    success: true,
+    key,
+    oldValue,
+    newValue: systemSettings[key],
+    message: `✅ Setting "${key}" berhasil diupdate.`,
+  };
+}
+
+/**
+ * Get all system settings
+ * @returns {Object} All settings
+ */
+function getAllSettings() {
+  return { ...systemSettings };
+}
+
 module.exports = {
   products,
   getAllProducts,
@@ -365,4 +459,7 @@ module.exports = {
   addProduct,
   removeProduct,
   updateProduct,
+  getSetting,
+  updateSetting,
+  getAllSettings,
 };
