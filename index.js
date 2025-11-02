@@ -12,6 +12,7 @@ const ChatbotLogic = require("./chatbotLogic");
 const MessageRouter = require("./lib/messageRouter");
 const WebhookServer = require("./services/webhookServer");
 const logRotationManager = require("./lib/logRotationManager");
+const PaymentReminderService = require("./src/services/payment/PaymentReminderService");
 
 // Initialize components
 const sessionManager = new SessionManager();
@@ -100,6 +101,9 @@ client.on("code", (code) => {
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 });
 
+// Payment reminder service (global)
+let paymentReminderService;
+
 // Event: Ready
 client.on("ready", () => {
   console.log("\n✅ WhatsApp Shopping Chatbot is ready!");
@@ -121,11 +125,21 @@ client.on("ready", () => {
     console.log("⚠️  WEBHOOK_URL not configured, webhook server disabled");
   }
 
+  // Start payment reminder service
+  paymentReminderService = new PaymentReminderService(client, sessionManager);
+  paymentReminderService.start();
+
   // Clean up inactive sessions every 10 minutes
   setInterval(() => {
     sessionManager.cleanupSessions();
     console.log("🧹 Cleaned up inactive sessions");
   }, 10 * 60 * 1000);
+
+  // Cleanup rate limit data every 5 minutes
+  setInterval(() => {
+    sessionManager.cleanupRateLimits();
+    console.log("🧹 Cleaned up expired rate limit data");
+  }, 5 * 60 * 1000);
 });
 
 // Event: Message (delegated to MessageRouter)
@@ -157,6 +171,11 @@ client.on("error", (error) => {
 // Graceful shutdown handlers
 const shutdown = async (signal) => {
   console.log(`\n\n⚠️ Received ${signal}, shutting down gracefully...`);
+
+  // Stop payment reminder service
+  if (paymentReminderService) {
+    paymentReminderService.stop();
+  }
 
   // Stop log rotation
   logRotationManager.stop();

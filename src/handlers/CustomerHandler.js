@@ -13,12 +13,14 @@ const UIMessages = require("../../lib/uiMessages");
 const FuzzySearch = require("../utils/FuzzySearch");
 const { SessionSteps } = require("../utils/Constants");
 const AIHandler = require("./AIHandler");
+const OrderService = require("../services/order/OrderService");
 
 class CustomerHandler extends BaseHandler {
   constructor(sessionManager, paymentHandlers, logger = null) {
     super(sessionManager, logger);
     this.paymentHandlers = paymentHandlers;
     this.aiHandler = new AIHandler(undefined, undefined, logger);
+    this.orderService = new OrderService();
   }
 
   /**
@@ -47,6 +49,15 @@ class CustomerHandler extends BaseHandler {
         return await this.handleOrderHistory(customerId);
       }
 
+      if (
+        message === "track" ||
+        message === "/track" ||
+        message.startsWith("/track ")
+      ) {
+        console.log(`[CustomerHandler] -> Global command: track`);
+        return await this.handleTrackOrder(customerId, message);
+      }
+
       // Route based on current step
       console.log(`[CustomerHandler] Routing to step-specific handler...`);
       switch (step) {
@@ -69,6 +80,10 @@ class CustomerHandler extends BaseHandler {
         case SessionSteps.AWAITING_ADMIN_APPROVAL:
           console.log(`[CustomerHandler] -> awaitingAdminApproval()`);
           return UIMessages.awaitingAdminApproval();
+
+        case "awaiting_order_id_for_proof":
+          console.log(`[CustomerHandler] -> handleOrderIdForProof()`);
+          return await this.handleOrderIdForProof(customerId, message);
 
         default:
           console.log(`[CustomerHandler] -> default: mainMenu()`);
@@ -365,6 +380,103 @@ class CustomerHandler extends BaseHandler {
     } catch (error) {
       this.logError(customerId, error, { action: "order_history" });
       return "❌ Gagal mengambil riwayat pesanan. Silakan coba lagi nanti.";
+    }
+  }
+
+  /**
+   * Handle order tracking (/track command)
+   */
+  async handleTrackOrder(customerId, message) {
+    try {
+      console.log(
+        `[CustomerHandler] handleTrackOrder() - Customer: ${customerId}, Message: "${message}"`
+      );
+
+      // Parse status filter if provided
+      const parts = message.trim().split(/\s+/);
+      const statusFilter = parts[1]?.toLowerCase(); // e.g., "/track pending"
+
+      let orders;
+      if (
+        statusFilter &&
+        ["pending", "completed", "awaiting_payment"].includes(statusFilter)
+      ) {
+        orders = await this.orderService.getOrdersByStatus(
+          customerId,
+          statusFilter
+        );
+      } else {
+        orders = await this.orderService.getCustomerOrders(customerId);
+      }
+
+      return UIMessages.orderList(orders);
+    } catch (error) {
+      this.logError(customerId, error, { action: "track_order" });
+      return "❌ Gagal mengambil riwayat pesanan. Silakan coba lagi nanti.";
+    }
+  }
+
+  /**
+   * Handle Order ID input after screenshot upload
+   */
+  async handleOrderIdForProof(customerId, message) {
+    const fs = require("fs");
+
+    try {
+      const orderId = message.trim().toUpperCase();
+
+      // Validate Order ID format (basic check)
+      if (!orderId.match(/^ORD-\d+/i)) {
+        return (
+          "❌ *Format Order ID tidak valid*\n\n" +
+          "Order ID harus dalam format: ORD-123456\n\n" +
+          "Silakan coba lagi atau ketik *menu* untuk membatalkan."
+        );
+      }
+
+      // Get temporary proof file
+      const tempFilepath = await this.sessionManager.get(
+        customerId,
+        "tempProofPath"
+      );
+
+      if (!tempFilepath || !fs.existsSync(tempFilepath)) {
+        await this.setStep(customerId, SessionSteps.MENU);
+        return (
+          "❌ *Bukti pembayaran tidak ditemukan*\n\n" +
+          "Silakan upload ulang screenshot pembayaran Anda.\n\n" +
+          "Ketik *menu* untuk kembali."
+        );
+      }
+
+      // Rename temp file with Order ID
+      const finalFilename = `${orderId}-${Date.now()}.jpg`;
+      const finalFilepath = `./payment_proofs/${finalFilename}`;
+
+      fs.renameSync(tempFilepath, finalFilepath);
+      console.log(`💾 Renamed proof: ${tempFilepath} → ${finalFilepath}`);
+
+      // Clear temp filepath from session
+      await this.sessionManager.set(customerId, "tempProofPath", null);
+
+      // Reset to menu step
+      await this.setStep(customerId, SessionSteps.MENU);
+
+      // Send confirmation
+      const confirmMessage =
+        "✅ *Bukti Pembayaran Diterima*\n\n" +
+        "Terima kasih! Bukti pembayaran Anda telah kami terima.\n\n" +
+        `📋 Order ID: ${orderId}\n\n` +
+        "Admin kami akan memverifikasi pembayaran dalam 5-15 menit.\n\n" +
+        "Anda akan menerima konfirmasi setelah pembayaran diverifikasi.\n\n" +
+        "━━━━━━━━━━━━━━━━━━\n" +
+        "💬 Ketik *menu* untuk kembali";
+
+      return confirmMessage;
+    } catch (error) {
+      this.logError(customerId, error, { action: "order_id_for_proof" });
+      await this.setStep(customerId, SessionSteps.MENU);
+      return "❌ Gagal memproses bukti pembayaran. Silakan coba lagi atau hubungi admin.";
     }
   }
 }

@@ -62,6 +62,7 @@ Memory updated: current-state.md
 **Solution:** Save memory IMMEDIATELY after important action
 
 ### When to Save:
+
 1. ✅ After feature completion
 2. ✅ After bug fix
 3. ✅ After commit
@@ -69,6 +70,7 @@ Memory updated: current-state.md
 5. ✅ **BEFORE replying to user**
 
 ### Pattern:
+
 ```
 Work → Save Memory → Commit Memory → Reply
 ```
@@ -76,11 +78,13 @@ Work → Save Memory → Commit Memory → Reply
 **NOT:** `Work → Reply → Crash → Lost!`
 
 ### Files Priority:
+
 1. `current-state.md` - CRITICAL (commits, status)
 2. `critical-bugs-pitfalls.md` - HIGH (bugs)
 3. `code-patterns.md` - MEDIUM (patterns)
 
 ### Commit Memory Separately:
+
 ```bash
 git commit -m "memory: <what changed>"
 ```

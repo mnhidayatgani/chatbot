@@ -10,6 +10,11 @@ class SessionManager {
     this.sessions = new Map(); // Fallback in-memory storage
     this.useRedis = false;
     this.sessionTTL = parseInt(process.env.SESSION_TTL) || 1800; // 30 minutes default
+
+    // Rate limiting
+    this.messageCount = new Map(); // customerId -> {count, resetTime}
+    this.rateLimitMax = parseInt(process.env.RATE_LIMIT_MAX) || 20; // messages per minute
+    this.rateLimitWindow = parseInt(process.env.RATE_LIMIT_WINDOW) || 60000; // 1 minute
   }
 
   /**
@@ -423,6 +428,69 @@ class SessionManager {
       }
     }
     return Array.from(this.sessions.keys());
+  }
+
+  /**
+   * Rate Limiting - Check if customer can send message
+   * @param {string} customerId
+   * @returns {boolean} True if allowed, false if rate limited
+   */
+  canSendMessage(customerId) {
+    const now = Date.now();
+    const data = this.messageCount.get(customerId);
+
+    if (!data || now > data.resetTime) {
+      // New window, reset counter
+      this.messageCount.set(customerId, {
+        count: 1,
+        resetTime: now + this.rateLimitWindow,
+      });
+      return true;
+    }
+
+    if (data.count >= this.rateLimitMax) {
+      // Rate limit exceeded
+      return false;
+    }
+
+    // Increment counter
+    data.count++;
+    this.messageCount.set(customerId, data);
+    return true;
+  }
+
+  /**
+   * Get remaining message quota for customer
+   * @param {string} customerId
+   * @returns {Object} { remaining, resetIn }
+   */
+  getRateLimitStatus(customerId) {
+    const now = Date.now();
+    const data = this.messageCount.get(customerId);
+
+    if (!data || now > data.resetTime) {
+      return {
+        remaining: this.rateLimitMax,
+        resetIn: this.rateLimitWindow,
+      };
+    }
+
+    return {
+      remaining: Math.max(0, this.rateLimitMax - data.count),
+      resetIn: data.resetTime - now,
+    };
+  }
+
+  /**
+   * Cleanup expired rate limit data (called periodically)
+   */
+  cleanupRateLimits() {
+    const now = Date.now();
+    for (const [customerId, data] of this.messageCount.entries()) {
+      if (now > data.resetTime) {
+        this.messageCount.delete(customerId);
+      }
+    }
   }
 }
 

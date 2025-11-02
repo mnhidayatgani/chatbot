@@ -18,12 +18,14 @@ This document outlines potential features that can be implemented to enhance the
 **Problem:** Customers cannot check their order status independently
 
 **Solution:**
+
 - Command: `/track` or `pesanan saya`
 - List all orders with status (pending/paid/delivered)
 - Show order details (items, total, payment method, date)
 - Filter by status
 
 **Implementation Details:**
+
 ```javascript
 // src/handlers/CustomerHandler.js
 async handleTrackOrder(customerId) {
@@ -33,6 +35,7 @@ async handleTrackOrder(customerId) {
 ```
 
 **Benefits:**
+
 - Reduces admin support burden (self-service)
 - Improves customer experience
 - Builds trust and transparency
@@ -48,19 +51,21 @@ async handleTrackOrder(customerId) {
 **Problem:** Customers send payment proof but forget to include Order ID
 
 **Solution:**
+
 - Detect image uploads via `message.hasMedia`
 - Auto-prompt: "Order ID untuk bukti pembayaran ini?"
 - Save to `payment_proofs/{orderId}_{timestamp}.jpg`
 - Link proof to order in database
 
 **Implementation Details:**
+
 ```javascript
 // src/core/MessageDispatcher.js
-if (message.hasMedia && message.type === 'image') {
+if (message.hasMedia && message.type === "image") {
   const media = await message.downloadMedia();
   const step = await sessionManager.getStep(customerId);
-  
-  if (step === 'awaiting_proof') {
+
+  if (step === "awaiting_proof") {
     // Save and prompt for Order ID
     return handler.handlePaymentProof(customerId, media);
   }
@@ -68,6 +73,7 @@ if (message.hasMedia && message.type === 'image') {
 ```
 
 **Benefits:**
+
 - Reduces manual work for admin
 - Better payment proof organization
 - Faster payment verification
@@ -83,22 +89,24 @@ if (message.hasMedia && message.type === 'image') {
 **Problem:** Customers checkout but forget to complete payment
 
 **Solution:**
+
 - Background job checks pending orders (> 30 minutes)
 - WhatsApp notification: "Halo! Pesanan Anda masih menunggu pembayaran..."
 - Include payment link/QR code
 - Optional: Second reminder after 2 hours
 
 **Implementation Details:**
+
 ```javascript
 // src/services/payment/PaymentReminderService.js
 class PaymentReminderService {
   async checkPendingPayments() {
     const orders = await this.orderService.getPendingOrders();
     const now = Date.now();
-    
+
     for (const order of orders) {
       const elapsed = now - order.createdAt;
-      
+
       if (elapsed > 30 * 60 * 1000 && !order.reminded) {
         await this.sendReminder(order.customerId, order);
       }
@@ -107,12 +115,13 @@ class PaymentReminderService {
 }
 
 // Schedule with node-cron
-cron.schedule('*/15 * * * *', () => {
+cron.schedule("*/15 * * * *", () => {
   reminderService.checkPendingPayments();
 });
 ```
 
 **Benefits:**
+
 - Reduces cart abandonment
 - Increases conversion rate
 - Improves revenue
@@ -131,12 +140,14 @@ cron.schedule('*/15 * * * *', () => {
 **Problem:** Customers want to save products for later purchase
 
 **Solution:**
+
 - Command: `simpan netflix` or emoji reaction ⭐
 - `/wishlist` - Show saved products
 - Easy add to cart: "Tambah [1] ke keranjang"
 - Session persistence (Redis)
 
 **Implementation Details:**
+
 ```javascript
 // src/handlers/CustomerHandler.js
 async handleAddToWishlist(customerId, productId) {
@@ -151,6 +162,7 @@ async handleViewWishlist(customerId) {
 ```
 
 **Benefits:**
+
 - Increases customer engagement
 - Encourages repeat purchases
 - Provides insight into customer preferences
@@ -166,12 +178,14 @@ async handleViewWishlist(customerId) {
 **Problem:** No discount or promotion mechanism
 
 **Solution:**
+
 - Admin create: `/createpromo NEWUSER10 10 30` (code, discount%, expiry days)
 - Customer apply: `promo NEWUSER10` during checkout
 - Track usage: one-time use per customer or global limit
 - Expiry date validation
 
 **Implementation Details:**
+
 ```javascript
 // src/services/promo/PromoService.js
 class PromoService {
@@ -179,26 +193,26 @@ class PromoService {
     const promo = {
       code: code.toUpperCase(),
       discount: discount,
-      expiresAt: Date.now() + (expiryDays * 24 * 60 * 60 * 1000),
+      expiresAt: Date.now() + expiryDays * 24 * 60 * 60 * 1000,
       usageLimit: usageLimit,
-      usedBy: []
+      usedBy: [],
     };
-    
+
     await this.storage.savePromo(promo);
     return promo;
   }
-  
+
   async validatePromo(code, customerId, orderTotal) {
     const promo = await this.storage.getPromo(code);
-    
+
     if (!promo || promo.expiresAt < Date.now()) {
       return { valid: false, error: "Promo expired" };
     }
-    
+
     if (promo.usedBy.includes(customerId)) {
       return { valid: false, error: "Promo already used" };
     }
-    
+
     const discount = (orderTotal * promo.discount) / 100;
     return { valid: true, discount, finalTotal: orderTotal - discount };
   }
@@ -206,6 +220,7 @@ class PromoService {
 ```
 
 **Benefits:**
+
 - Marketing tool for customer acquisition
 - Increases sales during promotions
 - Rewards loyal customers
@@ -222,12 +237,14 @@ class PromoService {
 **Problem:** No social proof or quality indicator
 
 **Solution:**
+
 - After delivery: "Rate your purchase (1-5 stars)"
 - Command: `/review netflix 5 Mantap, works!`
 - Show average rating in product list
 - Admin can view all reviews: `/reviews netflix`
 
 **Implementation Details:**
+
 ```javascript
 // src/services/product/ReviewService.js
 class ReviewService {
@@ -237,23 +254,23 @@ class ReviewService {
       productId,
       rating,
       comment,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     };
-    
+
     await this.storage.saveReview(review);
     await this.updateAverageRating(productId);
-    
+
     return review;
   }
-  
+
   async getProductReviews(productId) {
     return await this.storage.getReviews(productId);
   }
-  
+
   async getAverageRating(productId) {
     const reviews = await this.getProductReviews(productId);
     if (reviews.length === 0) return 0;
-    
+
     const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
     return (sum / reviews.length).toFixed(1);
   }
@@ -261,6 +278,7 @@ class ReviewService {
 ```
 
 **Benefits:**
+
 - Builds trust and credibility
 - Helps customers make informed decisions
 - Provides feedback for product improvement
@@ -279,11 +297,13 @@ class ReviewService {
 **Problem:** Limited to Indonesian language only
 
 **Solution:**
+
 - Support English + Bahasa Indonesia
 - Auto-detect from first message or `/language en`
 - Message templates in `messages/id.js` and `messages/en.js`
 
 **Implementation Details:**
+
 ```javascript
 // messages/id.js
 module.exports = {
@@ -304,12 +324,13 @@ module.exports = {
 };
 
 // Usage in handlers
-const lang = session.language || 'id';
+const lang = session.language || "id";
 const msg = require(`../../messages/${lang}`);
-return msg.welcome.replace('{shopName}', config.SHOP_NAME);
+return msg.welcome.replace("{shopName}", config.SHOP_NAME);
 ```
 
 **Benefits:**
+
 - Expands market to English-speaking customers
 - Better user experience for non-Indonesian speakers
 
@@ -324,12 +345,14 @@ return msg.welcome.replace('{shopName}', config.SHOP_NAME);
 **Problem:** No incentive for repeat purchases
 
 **Solution:**
+
 - Earn points: 1 point = Rp 1,000 spent
 - Redeem: 100 points = Rp 10,000 discount
 - Command: `/points` to check balance
 - Admin can award bonus points: `/addpoints 6281234567890 50`
 
 **Implementation Details:**
+
 ```javascript
 // src/services/loyalty/LoyaltyService.js
 class LoyaltyService {
@@ -337,36 +360,37 @@ class LoyaltyService {
     const points = Math.floor(orderTotal / 1000);
     const current = await this.getPoints(customerId);
     const newTotal = current + points;
-    
+
     await this.storage.setPoints(customerId, newTotal);
-    
+
     return {
       earned: points,
       total: newTotal,
-      redeemable: Math.floor(newTotal / 100) * 10000
+      redeemable: Math.floor(newTotal / 100) * 10000,
     };
   }
-  
+
   async redeemPoints(customerId, pointsToRedeem) {
     const current = await this.getPoints(customerId);
-    
+
     if (current < pointsToRedeem) {
       return { success: false, error: "Insufficient points" };
     }
-    
+
     const discount = (pointsToRedeem / 100) * 10000;
     await this.storage.setPoints(customerId, current - pointsToRedeem);
-    
+
     return {
       success: true,
       discount,
-      remainingPoints: current - pointsToRedeem
+      remainingPoints: current - pointsToRedeem,
     };
   }
 }
 ```
 
 **Benefits:**
+
 - Increases customer retention
 - Encourages repeat purchases
 - Builds brand loyalty
@@ -383,54 +407,59 @@ class LoyaltyService {
 **Problem:** No official invoice/receipt provided
 
 **Solution:**
+
 - Auto-generate PDF after payment confirmation
 - Include: Order details, items, payment method, date, receipt number
 - Send as WhatsApp document
 - Store in `receipts/` directory
 
 **Implementation Details:**
+
 ```javascript
 // src/services/receipt/ReceiptService.js
-const PDFDocument = require('pdfkit');
+const PDFDocument = require("pdfkit");
 
 class ReceiptService {
   async generateReceipt(order) {
     const doc = new PDFDocument();
     const filename = `receipt_${order.orderId}.pdf`;
-    const filepath = path.join(__dirname, '../../receipts', filename);
-    
+    const filepath = path.join(__dirname, "../../receipts", filename);
+
     doc.pipe(fs.createWriteStream(filepath));
-    
+
     // Header
-    doc.fontSize(20).text(config.SHOP_NAME, { align: 'center' });
-    doc.fontSize(10).text('INVOICE / RECEIPT', { align: 'center' });
+    doc.fontSize(20).text(config.SHOP_NAME, { align: "center" });
+    doc.fontSize(10).text("INVOICE / RECEIPT", { align: "center" });
     doc.moveDown();
-    
+
     // Order details
     doc.fontSize(12).text(`Order ID: ${order.orderId}`);
-    doc.text(`Date: ${new Date(order.createdAt).toLocaleString('id-ID')}`);
+    doc.text(`Date: ${new Date(order.createdAt).toLocaleString("id-ID")}`);
     doc.text(`Customer: ${order.customerName || order.customerId}`);
     doc.moveDown();
-    
+
     // Items
-    doc.text('Items:', { underline: true });
-    order.items.forEach(item => {
-      doc.text(`${item.name} - Rp ${item.price.toLocaleString('id-ID')}`);
+    doc.text("Items:", { underline: true });
+    order.items.forEach((item) => {
+      doc.text(`${item.name} - Rp ${item.price.toLocaleString("id-ID")}`);
     });
     doc.moveDown();
-    
+
     // Total
-    doc.fontSize(14).text(`Total: Rp ${order.total.toLocaleString('id-ID')}`, { bold: true });
+    doc
+      .fontSize(14)
+      .text(`Total: Rp ${order.total.toLocaleString("id-ID")}`, { bold: true });
     doc.text(`Payment: ${order.paymentMethod}`);
-    
+
     doc.end();
-    
+
     return filepath;
   }
 }
 ```
 
 **Benefits:**
+
 - Professional customer experience
 - Tax compliance
 - Record keeping for both parties
@@ -449,6 +478,7 @@ class ReceiptService {
 **Problem:** Limited analytics in `/stats` command
 
 **Solution:**
+
 - Revenue breakdown by payment method
 - Top 5 selling products (last 30 days)
 - Customer retention rate
@@ -456,6 +486,7 @@ class ReceiptService {
 - Average order value (AOV)
 
 **Implementation Details:**
+
 ```javascript
 // src/services/admin/AdminStatsService.js (enhancement)
 async getEnhancedStats() {
@@ -474,7 +505,7 @@ async getEnhancedStats() {
     },
     aov: await this.getAverageOrderValue()
   };
-  
+
   return UIMessages.enhancedStatsReport(stats);
 }
 
@@ -482,19 +513,20 @@ async getEnhancedStats() {
 generateRevenueGraph(dailyRevenue) {
   const max = Math.max(...dailyRevenue);
   const scale = 20 / max; // Scale to 20 chars height
-  
+
   let graph = "📊 Revenue Last 7 Days\n\n";
   for (let i = 0; i < dailyRevenue.length; i++) {
     const height = Math.floor(dailyRevenue[i] * scale);
     const bar = "█".repeat(height);
     graph += `Day ${i + 1}: ${bar} Rp ${dailyRevenue[i].toLocaleString()}\n`;
   }
-  
+
   return graph;
 }
 ```
 
 **Benefits:**
+
 - Data-driven business decisions
 - Identify trends and opportunities
 - Track business growth
@@ -510,6 +542,7 @@ generateRevenueGraph(dailyRevenue) {
 **Problem:** Admin cannot schedule messages for future
 
 **Solution:**
+
 - Command: `/schedule "Promo Minggu Ini!" 2025-11-05 10:00`
 - Background job checks scheduled messages
 - Auto-send at specified time (timezone: WIB)
@@ -517,41 +550,42 @@ generateRevenueGraph(dailyRevenue) {
 - Cancel: `/cancelschedule <id>`
 
 **Implementation Details:**
+
 ```javascript
 // src/services/broadcast/SchedulerService.js
-const cron = require('node-cron');
+const cron = require("node-cron");
 
 class SchedulerService {
   constructor() {
     this.scheduledMessages = new Map();
     this.startCronJob();
   }
-  
-  async scheduleMessage(message, datetime, targetGroup = 'all') {
-    const id = crypto.randomBytes(8).toString('hex');
+
+  async scheduleMessage(message, datetime, targetGroup = "all") {
+    const id = crypto.randomBytes(8).toString("hex");
     const scheduled = {
       id,
       message,
       datetime: new Date(datetime).getTime(),
       targetGroup,
-      status: 'pending'
+      status: "pending",
     };
-    
+
     this.scheduledMessages.set(id, scheduled);
     await this.storage.saveScheduled(scheduled);
-    
+
     return id;
   }
-  
+
   startCronJob() {
     // Check every minute
-    cron.schedule('* * * * *', async () => {
+    cron.schedule("* * * * *", async () => {
       const now = Date.now();
-      
+
       for (const [id, scheduled] of this.scheduledMessages) {
-        if (scheduled.status === 'pending' && scheduled.datetime <= now) {
+        if (scheduled.status === "pending" && scheduled.datetime <= now) {
           await this.sendScheduledMessage(scheduled);
-          scheduled.status = 'sent';
+          scheduled.status = "sent";
         }
       }
     });
@@ -560,6 +594,7 @@ class SchedulerService {
 ```
 
 **Benefits:**
+
 - Automated marketing campaigns
 - Time zone convenience
 - Better planning
@@ -576,51 +611,53 @@ class SchedulerService {
 **Problem:** Cannot target specific customer groups
 
 **Solution:**
+
 - `/broadcast-new` → Only new customers (< 7 days)
 - `/broadcast-vip` → High spenders (> Rp 100,000 total)
 - `/broadcast-inactive` → No purchase in > 30 days
 - `/broadcast-repeat` → Made 2+ purchases
 
 **Implementation Details:**
+
 ```javascript
 // src/handlers/AdminHandler.js (enhancement)
 async handleSegmentedBroadcast(adminId, segment, message) {
   const customers = await this.getCustomerSegment(segment);
-  
+
   let sentCount = 0;
   for (const customerId of customers) {
     await this.client.sendMessage(customerId, message);
     sentCount++;
   }
-  
+
   return `✅ Broadcast sent to ${sentCount} customers (${segment})`;
 }
 
 async getCustomerSegment(segment) {
   const allCustomers = await this.sessionManager.getAllCustomers();
   const now = Date.now();
-  
+
   switch (segment) {
     case 'new':
-      return allCustomers.filter(c => 
+      return allCustomers.filter(c =>
         now - c.firstSeen < 7 * 24 * 60 * 60 * 1000
       );
-      
+
     case 'vip':
-      return allCustomers.filter(c => 
+      return allCustomers.filter(c =>
         c.totalSpent > 100000
       );
-      
+
     case 'inactive':
-      return allCustomers.filter(c => 
+      return allCustomers.filter(c =>
         c.lastPurchase && (now - c.lastPurchase > 30 * 24 * 60 * 60 * 1000)
       );
-      
+
     case 'repeat':
-      return allCustomers.filter(c => 
+      return allCustomers.filter(c =>
         c.purchaseCount >= 2
       );
-      
+
     default:
       return allCustomers;
   }
@@ -628,6 +665,7 @@ async getCustomerSegment(segment) {
 ```
 
 **Benefits:**
+
 - Targeted marketing
 - Higher conversion rates
 - Personalized customer engagement
@@ -645,12 +683,14 @@ async getCustomerSegment(segment) {
 **Problem:** No spam protection, risk of WhatsApp ban
 
 **Solution:**
+
 - Limit: 20 messages per minute per customer
 - Track in `sessionManager.messageCount` Map
 - Block messages if limit exceeded
 - Auto-reset after 1 minute
 
 **Implementation Details:**
+
 ```javascript
 // sessionManager.js (enhancement)
 canSendMessage(customerId) {
@@ -660,16 +700,16 @@ canSendMessage(customerId) {
     count: 0,
     resetTime: now + 60000
   };
-  
+
   if (now > data.resetTime) {
     data.count = 0;
     data.resetTime = now + 60000;
   }
-  
+
   if (data.count >= limit) {
     return false;
   }
-  
+
   data.count++;
   this.messageCount.set(customerId, data);
   return true;
@@ -683,6 +723,7 @@ if (!sessionManager.canSendMessage(customerId)) {
 ```
 
 **Benefits:**
+
 - Prevents WhatsApp ban
 - Protects against spam
 - Better resource management
@@ -698,39 +739,41 @@ if (!sessionManager.canSendMessage(customerId)) {
 **Problem:** Webhook failures cause payment not verified
 
 **Solution:**
+
 - Exponential backoff: 1s, 2s, 4s, 8s, 16s
 - Max 5 retry attempts
 - Log all failures to `logs/webhook_failures.log`
 - Admin notification on final failure
 
 **Implementation Details:**
+
 ```javascript
 // services/webhookServer.js (enhancement)
 async handleWebhookWithRetry(req, res, maxRetries = 5) {
   let attempt = 0;
   let delay = 1000; // Start with 1 second
-  
+
   while (attempt < maxRetries) {
     try {
       await this.processWebhook(req.body);
       return res.status(200).send('OK');
     } catch (error) {
       attempt++;
-      
+
       if (attempt >= maxRetries) {
         this.logger.error('Webhook failed after max retries', {
           error: error.message,
           payload: req.body
         });
-        
+
         // Notify admin
         await this.notifyAdmin(
           `⚠️ Webhook failed: ${req.body.referenceId}`
         );
-        
+
         return res.status(500).send('Failed after retries');
       }
-      
+
       // Wait before retry
       await new Promise(resolve => setTimeout(resolve, delay));
       delay *= 2; // Exponential backoff
@@ -740,6 +783,7 @@ async handleWebhookWithRetry(req, res, maxRetries = 5) {
 ```
 
 **Benefits:**
+
 - More reliable payment verification
 - Reduces manual intervention
 - Better error handling
@@ -755,34 +799,36 @@ async handleWebhookWithRetry(req, res, maxRetries = 5) {
 **Problem:** Bot restart clears all sessions and carts
 
 **Solution:**
+
 - Replace Map with Redis client
 - 30-minute TTL auto-expires sessions
 - Survives bot restarts
 - Better scalability
 
 **Implementation Details:**
+
 ```javascript
 // sessionManager.js (major refactor)
-const redis = require('redis');
+const redis = require("redis");
 
 class SessionManager {
   constructor() {
     this.redis = redis.createClient({
-      url: process.env.REDIS_URL || 'redis://localhost:6379'
+      url: process.env.REDIS_URL || "redis://localhost:6379",
     });
     this.redis.connect();
   }
-  
+
   async getSession(customerId) {
     const data = await this.redis.get(`session:${customerId}`);
-    
+
     if (!data) {
       return this.createSession(customerId);
     }
-    
+
     return JSON.parse(data);
   }
-  
+
   async setSession(customerId, session) {
     await this.redis.set(
       `session:${customerId}`,
@@ -790,22 +836,23 @@ class SessionManager {
       { EX: 1800 } // 30 min TTL
     );
   }
-  
+
   async getAllSessions() {
-    const keys = await this.redis.keys('session:*');
+    const keys = await this.redis.keys("session:*");
     const sessions = [];
-    
+
     for (const key of keys) {
       const data = await this.redis.get(key);
       sessions.push(JSON.parse(data));
     }
-    
+
     return sessions;
   }
 }
 ```
 
 **Benefits:**
+
 - Persistent sessions across restarts
 - Auto-cleanup (TTL)
 - Scalable for multiple bot instances
@@ -820,29 +867,30 @@ class SessionManager {
 
 ## 📊 Implementation Priority Matrix
 
-| Feature | Customer Value | Complexity | Time | Priority |
-|---------|---------------|------------|------|----------|
-| Order Tracking | ⭐⭐⭐⭐⭐ | Low | 2-3h | 🔴 High |
-| Auto Screenshot | ⭐⭐⭐⭐ | Low | 2-3h | 🔴 High |
-| Payment Reminder | ⭐⭐⭐⭐⭐ | Medium | 3-4h | 🔴 High |
-| Wishlist | ⭐⭐⭐⭐ | Medium | 3-4h | 🟡 Medium |
-| Promo Codes | ⭐⭐⭐⭐⭐ | Medium | 4-5h | 🟡 Medium |
-| Product Reviews | ⭐⭐⭐⭐ | Medium | 4-5h | 🟡 Medium |
-| Multi-Language | ⭐⭐⭐ | Medium | 5-6h | 🟢 Low |
-| Loyalty Points | ⭐⭐⭐⭐ | High | 5-6h | 🟢 Low |
-| PDF Receipts | ⭐⭐⭐ | Medium | 4-5h | 🟢 Low |
-| Enhanced Stats | ⭐⭐⭐⭐ | Medium | 4-5h | 🟡 Medium |
-| Broadcast Schedule | ⭐⭐⭐ | Low | 3-4h | 🟡 Medium |
-| Customer Segments | ⭐⭐⭐⭐ | Low | 3-4h | 🟡 Medium |
-| Rate Limiting | ⭐⭐⭐⭐⭐ | Low | 2h | 🔴 High |
-| Webhook Retry | ⭐⭐⭐⭐ | Low | 2h | 🔴 High |
-| Redis Persistence | ⭐⭐⭐⭐⭐ | Medium | 4-5h | 🟡 Medium |
+| Feature            | Customer Value | Complexity | Time | Priority  |
+| ------------------ | -------------- | ---------- | ---- | --------- |
+| Order Tracking     | ⭐⭐⭐⭐⭐     | Low        | 2-3h | 🔴 High   |
+| Auto Screenshot    | ⭐⭐⭐⭐       | Low        | 2-3h | 🔴 High   |
+| Payment Reminder   | ⭐⭐⭐⭐⭐     | Medium     | 3-4h | 🔴 High   |
+| Wishlist           | ⭐⭐⭐⭐       | Medium     | 3-4h | 🟡 Medium |
+| Promo Codes        | ⭐⭐⭐⭐⭐     | Medium     | 4-5h | 🟡 Medium |
+| Product Reviews    | ⭐⭐⭐⭐       | Medium     | 4-5h | 🟡 Medium |
+| Multi-Language     | ⭐⭐⭐         | Medium     | 5-6h | 🟢 Low    |
+| Loyalty Points     | ⭐⭐⭐⭐       | High       | 5-6h | 🟢 Low    |
+| PDF Receipts       | ⭐⭐⭐         | Medium     | 4-5h | 🟢 Low    |
+| Enhanced Stats     | ⭐⭐⭐⭐       | Medium     | 4-5h | 🟡 Medium |
+| Broadcast Schedule | ⭐⭐⭐         | Low        | 3-4h | 🟡 Medium |
+| Customer Segments  | ⭐⭐⭐⭐       | Low        | 3-4h | 🟡 Medium |
+| Rate Limiting      | ⭐⭐⭐⭐⭐     | Low        | 2h   | 🔴 High   |
+| Webhook Retry      | ⭐⭐⭐⭐       | Low        | 2h   | 🔴 High   |
+| Redis Persistence  | ⭐⭐⭐⭐⭐     | Medium     | 4-5h | 🟡 Medium |
 
 ---
 
 ## 🎯 Recommended Implementation Sequence
 
 ### Phase 1: Foundation (Week 1-2)
+
 1. ✅ Rate Limiting Enhancement
 2. ✅ Order Tracking
 3. ✅ Auto Screenshot Detection
@@ -852,6 +900,7 @@ class SessionManager {
 **Total:** ~12-14 hours
 
 ### Phase 2: Customer Engagement (Week 3-4)
+
 6. ✅ Promo Code System
 7. ✅ Wishlist Feature
 8. ✅ Enhanced Admin Dashboard
@@ -860,6 +909,7 @@ class SessionManager {
 **Total:** ~14-16 hours
 
 ### Phase 3: Advanced Features (Month 2)
+
 10. ✅ Product Reviews
 11. ✅ Loyalty Points
 12. ✅ PDF Receipts
@@ -869,6 +919,7 @@ class SessionManager {
 **Total:** ~20-24 hours
 
 ### Phase 4: Polish (Month 3+)
+
 15. ✅ Multi-Language Support
 16. Additional features based on user feedback
 
@@ -877,6 +928,7 @@ class SessionManager {
 ## 🔧 Technical Constraints
 
 All features must comply with:
+
 - ✅ **File size limit:** < 700 lines per file in `src/`
 - ✅ **ESLint:** 0 errors required
 - ✅ **Tests:** Unit tests for all new features
@@ -889,6 +941,7 @@ All features must comply with:
 ## 📚 Dependencies
 
 New packages required:
+
 - `node-cron` - Scheduling (payment reminders, broadcasts)
 - `pdfkit` - PDF generation (receipts)
 - `redis` - Session persistence
@@ -900,6 +953,7 @@ New packages required:
 ## 🎓 Learning Resources
 
 **Implementation patterns to follow:**
+
 - `.github/copilot-instructions.md` - Architecture guidelines
 - `.github/memory/github-workflows-rules.md` - CI/CD requirements
 - `docs/MODULARIZATION.md` - Modular design patterns

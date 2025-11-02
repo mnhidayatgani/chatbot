@@ -18,6 +18,10 @@ class WebhookServer {
     // Xendit webhook token for signature verification
     this.webhookToken = process.env.XENDIT_WEBHOOK_TOKEN || "";
 
+    // Retry configuration
+    this.maxRetries = 5;
+    this.retryDelays = [1000, 2000, 4000, 8000, 16000]; // Exponential backoff
+
     this.setupMiddleware();
     this.setupRoutes();
   }
@@ -134,6 +138,47 @@ class WebhookServer {
   }
 
   /**
+   * Retry helper with exponential backoff
+   * @param {Function} fn - Async function to retry
+   * @param {string} context - Description for logging
+   * @returns {Promise<any>}
+   */
+  async retryWithBackoff(fn, context = "operation") {
+    for (let attempt = 0; attempt < this.maxRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (error) {
+        const isLastAttempt = attempt === this.maxRetries - 1;
+
+        if (isLastAttempt) {
+          console.error(
+            `❌ ${context} failed after ${this.maxRetries} attempts:`,
+            error.message
+          );
+          throw error;
+        }
+
+        const delay = this.retryDelays[attempt];
+        console.warn(
+          `⚠️ ${context} failed (attempt ${attempt + 1}/${
+            this.maxRetries
+          }), retrying in ${delay}ms...`
+        );
+        await this.sleep(delay);
+      }
+    }
+  }
+
+  /**
+   * Sleep helper
+   * @param {number} ms
+   * @returns {Promise<void>}
+   */
+  sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
    * Handle successful payment
    * @param {Object} payload - Webhook payload
    */
@@ -149,38 +194,35 @@ class WebhookServer {
 
       console.log(`✅ Payment successful: ${invoiceId}`);
 
-      // Find customer by invoice ID
+      // Find customer by invoice ID (with retry)
       let customerId = null;
 
-      // Search through all sessions to find matching invoice
-      if (this.sessionManager.useRedis) {
-        const redisClient = require("./lib/redisClient");
-        const keys = await redisClient.getClient().keys("session:*");
+      customerId = await this.retryWithBackoff(async () => {
+        // Search through all sessions to find matching invoice
+        if (this.sessionManager.useRedis) {
+          const redisClient = require("../lib/redisClient");
+          const keys = await redisClient.getClient().keys("session:*");
 
-        for (const key of keys) {
-          const sessionData = await redisClient.getClient().get(key);
-          if (sessionData) {
-            const session = JSON.parse(sessionData);
+          for (const key of keys) {
+            const sessionData = await redisClient.getClient().get(key);
+            if (sessionData) {
+              const session = JSON.parse(sessionData);
+              if (session.paymentInvoiceId === invoiceId) {
+                return session.customerId;
+              }
+            }
+          }
+        } else {
+          // In-memory fallback
+          for (const [id, session] of this.sessionManager.sessions.entries()) {
             if (session.paymentInvoiceId === invoiceId) {
-              customerId = session.customerId;
-              break;
+              return id;
             }
           }
         }
-      } else {
-        // In-memory fallback
-        for (const [id, session] of this.sessionManager.sessions.entries()) {
-          if (session.paymentInvoiceId === invoiceId) {
-            customerId = id;
-            break;
-          }
-        }
-      }
 
-      if (!customerId) {
-        console.error(`❌ Customer not found for invoice: ${invoiceId}`);
-        return;
-      }
+        throw new Error(`Customer not found for invoice: ${invoiceId}`);
+      }, `Finding customer for invoice ${invoiceId}`);
 
       console.log(`📦 Found customer: ${customerId.slice(-4)}`);
 
@@ -221,22 +263,68 @@ class WebhookServer {
         return;
       }
 
-      // Send delivery message via WhatsApp
+      // Send delivery message via WhatsApp (with retry)
       const message = this.formatDeliveryMessage(deliveryResult, orderId);
-      await this.whatsappClient.sendMessage(customerId, message);
+      await this.retryWithBackoff(async () => {
+        await this.whatsappClient.sendMessage(customerId, message);
+      }, `Sending delivery message to ${customerId.slice(-4)}`);
 
       // Log transaction
-      const TransactionLogger = require("./lib/transactionLogger");
+      const TransactionLogger = require("../lib/transactionLogger");
       const logger = new TransactionLogger();
       logger.logProductsDelivered(customerId, orderId, cart, "webhook_auto");
 
-      // Update session state
-      await this.sessionManager.setStep(customerId, "menu");
-      await this.sessionManager.clearCart(customerId);
+      // Update session state (with retry)
+      await this.retryWithBackoff(async () => {
+        await this.sessionManager.setStep(customerId, "menu");
+        await this.sessionManager.clearCart(customerId);
+      }, `Updating session for ${customerId.slice(-4)}`);
 
       console.log(`✅ Auto-delivered products to ${customerId.slice(-4)}`);
     } catch (error) {
       console.error("❌ handlePaymentSuccess error:", error.message);
+
+      // Notify admin on failure
+      await this.notifyAdminOfFailure(
+        "Payment success handling failed",
+        error.message,
+        { invoiceId: payload.id }
+      );
+    }
+  }
+
+  /**
+   * Notify admin of webhook processing failure
+   * @param {string} context
+   * @param {string} errorMessage
+   * @param {Object} details
+   */
+  async notifyAdminOfFailure(context, errorMessage, details = {}) {
+    try {
+      const adminNumbers = [
+        process.env.ADMIN_NUMBER_1,
+        process.env.ADMIN_NUMBER_2,
+      ].filter(Boolean);
+
+      if (adminNumbers.length === 0) return;
+
+      const message =
+        `⚠️ *Webhook Error*\n\n` +
+        `Context: ${context}\n` +
+        `Error: ${errorMessage}\n\n` +
+        `Details: ${JSON.stringify(details, null, 2)}\n\n` +
+        `Time: ${new Date().toISOString()}`;
+
+      for (const adminNum of adminNumbers) {
+        const adminId = adminNum.includes("@c.us")
+          ? adminNum
+          : `${adminNum}@c.us`;
+        await this.whatsappClient.sendMessage(adminId, message);
+      }
+
+      console.log("✅ Notified admin of webhook failure");
+    } catch (notifyError) {
+      console.error("❌ Failed to notify admin:", notifyError.message);
     }
   }
 

@@ -11,6 +11,7 @@
 5. **CHECK WORKFLOWS BEFORE PUSH** - Read `.github/memory/github-workflows-rules.md` for CI/CD requirements
 
 **GitHub Actions Rules (MUST FOLLOW):**
+
 - ✅ **File size limit:** Max 700 lines per .js file in `src/` (BLOCKING)
 - ✅ **No hardcoded secrets:** No `xnd_production`, hardcoded passwords (BLOCKING)
 - ✅ **ESLint clean:** 0 errors required (BLOCKING)
