@@ -27,8 +27,9 @@ module.exports = {
   // Business settings
   shop: {
     name: process.env.SHOP_NAME || "Premium Shop",
-    supportEmail: process.env.SUPPORT_EMAIL || "support@premiumshop.com",
-    supportWhatsapp: process.env.SUPPORT_WHATSAPP || "Nomor ini",
+    botName: process.env.BOT_NAME || "Premium Shop Bot",
+    supportEmail: process.env.CONTACT_EMAIL || "support@premiumshop.com",
+    supportWhatsapp: process.env.CONTACT_WHATSAPP || "Nomor ini",
   },
 
   // Feature flags
