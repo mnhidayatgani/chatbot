@@ -73,7 +73,11 @@ class ChatbotLogic {
     try {
       // Get current session step
       const step = await this.sessionManager.getStep(customerId);
-      const normalizedMessage = sanitizedMessage.toLowerCase().trim();
+
+      // Don't lowercase admin commands (they may contain case-sensitive data like Order IDs)
+      const normalizedMessage = sanitizedMessage.startsWith("/")
+        ? sanitizedMessage.trim()
+        : sanitizedMessage.toLowerCase().trim();
 
       console.log(`[ChatbotLogic] Customer: ${customerId}`);
       console.log(`[ChatbotLogic] Message: "${normalizedMessage}"`);
