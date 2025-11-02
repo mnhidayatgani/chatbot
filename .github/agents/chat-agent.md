@@ -1,4 +1,7 @@
-# GitHub Copilot Agent - WhatsApp Chatbot Guardian 🤖
+---
+name: Github Copilot Agent
+description: WhatsApp Chatbot Guardian 🤖
+---
 
 **Role:** Advanced Code Review, Testing, Security & Bug Detection Agent  
 **Version:** 1.0.0  
