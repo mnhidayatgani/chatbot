@@ -14,6 +14,7 @@ WhatsApp Shopping Chatbot now includes AI-powered features using **Google Gemini
 ### Key Features
 
 1. **Customer Features**:
+
    - **Typo Correction**: Automatically fixes common typos in product search
    - **Product Q&A**: Answers product-related questions naturally
    - **Smart Recommendations**: Personalized product suggestions
@@ -123,6 +124,7 @@ npm start
 **Scenario**: Customer makes a typo when searching for a product.
 
 **Example**:
+
 ```
 Customer: "netflx"
 AI: "Maksud kamu Netflix ya? Ini detailnya:
@@ -135,6 +137,7 @@ Mau saya tambahkan ke cart? 🛒"
 ```
 
 **How it works**:
+
 - FuzzySearch gets low confidence score (<0.6)
 - AIHandler triggers with `typo` intent
 - AI Tool `searchProducts()` finds correct product
@@ -145,6 +148,7 @@ Mau saya tambahkan ke cart? 🛒"
 **Scenario**: Customer asks a question about products.
 
 **Example**:
+
 ```
 Customer: "apa bedanya netflix sama disney plus?"
 AI: "Netflix dan Disney+ sama-sama layanan streaming, tapi beda konten:
@@ -163,6 +167,7 @@ Harga sama: Rp 15,800/bulan. Pilih sesuai selera ya! 😊"
 ```
 
 **How it works**:
+
 - Question word detected ("apa")
 - AIHandler triggers with `question` intent
 - AI Tool `getProductInfo()` retrieves product details
@@ -173,6 +178,7 @@ Harga sama: Rp 15,800/bulan. Pilih sesuai selera ya! 😊"
 **Scenario**: Customer asks for product suggestions.
 
 **Example**:
+
 ```
 Customer: "kasih rekomendasi buat streaming musik"
 AI: "Berdasarkan preferensi kamu, saya rekomendasikan:
@@ -193,6 +199,7 @@ Spotify cocok buat fokus musik, YouTube Premium all-in-one! Mau coba yang mana? 
 ```
 
 **How it works**:
+
 - Recommendation keyword detected
 - AIHandler triggers with `recommendation` intent
 - AI Tool `recommendProducts()` filters by preferences
@@ -209,6 +216,7 @@ Generate compelling product descriptions with AI.
 **Command**: `/generate-desc <productId>`
 
 **Example**:
+
 ```
 Admin: /generate-desc netflix
 
@@ -239,6 +247,7 @@ Jangan lewatkan series terbaru! Beli sekarang cuma Rp 15,800/bulan. Stok terbata
 ```
 
 **Use Case**:
+
 - Create product listings for marketplace
 - Update website product pages
 - Generate social media content
@@ -251,29 +260,32 @@ Jangan lewatkan series terbaru! Beli sekarang cuma Rp 15,800/bulan. Stok terbata
 ### Pricing (Gemini 2.5 Flash Lite)
 
 Approximate costs:
+
 - **Input**: $0.00001 per 1K tokens
 - **Output**: $0.00003 per 1K tokens
 - **Average call**: ~$0.00005 (500 tokens)
 
 ### Cost Estimates
 
-| Scenario | Calls/Month | Est. Cost |
-|----------|------------|-----------|
-| Low traffic (100 customers) | 500 calls | ~$0.025 |
-| Medium traffic (500 customers) | 2,500 calls | ~$0.125 |
-| High traffic (2,000 customers) | 10,000 calls | ~$0.50 |
-| Very high (5,000 customers) | 25,000 calls | ~$1.25 |
+| Scenario                       | Calls/Month  | Est. Cost |
+| ------------------------------ | ------------ | --------- |
+| Low traffic (100 customers)    | 500 calls    | ~$0.025   |
+| Medium traffic (500 customers) | 2,500 calls  | ~$0.125   |
+| High traffic (2,000 customers) | 10,000 calls | ~$0.50    |
+| Very high (5,000 customers)    | 25,000 calls | ~$1.25    |
 
 **Conclusion**: Even with 5,000 customers, monthly cost < $2. Much cheaper than GPT-4o (~$25/month for same traffic).
 
 ### Rate Limiting
 
 Protects against:
+
 - Customer spam/abuse
 - Runaway costs
 - API quota exhaustion
 
 **Default Limits**:
+
 - 5 calls per customer per hour
 - 20 calls per customer per day
 - Admin: 50 calls per day (higher for description generation)
@@ -281,12 +293,14 @@ Protects against:
 ### Cost Tracking
 
 AIService automatically tracks:
+
 - Daily API calls
 - Daily cost (in USD)
 - Monthly cumulative cost
 - Alerts when threshold exceeded
 
 **View cost stats** (feature coming in Sprint 6):
+
 ```
 Admin: /ai-stats
 
@@ -317,9 +331,9 @@ AIHandler uses Vercel AI SDK's `tool()` function to connect AI with bot's Produc
 ```javascript
 // Example: searchProducts tool
 const searchProductsTool = tool({
-  description: 'Search for products by name with typo correction',
+  description: "Search for products by name with typo correction",
   parameters: z.object({
-    query: z.string().describe('Product name (handle typos)'),
+    query: z.string().describe("Product name (handle typos)"),
   }),
   execute: async ({ query }) => {
     // Use FuzzySearch to find products
@@ -337,6 +351,7 @@ const searchProductsTool = tool({
 Reduces API calls and costs:
 
 **Enabled by default**:
+
 - TTL: 1 hour
 - Key format: `ai:cache:${customerId}:${message}`
 - Stored in Redis (if available)
@@ -344,6 +359,7 @@ Reduces API calls and costs:
 **Cache hit rate**: ~30-40% for common questions
 
 **Example**:
+
 ```
 Customer A: "apa itu netflix?" → API call → Cache
 Customer B: "apa itu netflix?" → Cache hit (no API call)
@@ -354,18 +370,21 @@ Customer B: "apa itu netflix?" → Cache hit (no API call)
 AIHandler implements robust error handling:
 
 1. **Rate Limit Exceeded**:
+
    ```
    ⚠️ Kamu sudah menggunakan AI terlalu banyak hari ini.
    Silakan coba lagi nanti atau hubungi admin.
    ```
 
 2. **API Error**:
+
    ```
    🔧 Sistem AI sedang sibuk.
    Silakan coba lagi dalam beberapa saat.
    ```
 
 3. **No Results**:
+
    ```
    😕 Maaf, saya tidak menemukan produk yang kamu cari.
    Coba kata kunci lain atau ketik *menu* untuk lihat semua produk.
@@ -383,11 +402,13 @@ AIHandler implements robust error handling:
 ### Unit Tests
 
 Run AI tests:
+
 ```bash
 npm test -- tests/unit/handlers/AIHandler.test.js
 ```
 
 **Coverage**: 11 test suites covering:
+
 - shouldHandleMessage logic
 - Intent detection (typo/question/recommendation)
 - Tool calling (searchProducts, getProductInfo, recommendProducts)
@@ -399,24 +420,28 @@ npm test -- tests/unit/handlers/AIHandler.test.js
 ### Manual Testing
 
 **Test Typo Correction**:
+
 1. Start bot: `npm start`
 2. Send: `browsing` → Enter browsing mode
 3. Send: `netflx` → AI should correct to "netflix"
 4. Verify: Product added to cart
 
 **Test Q&A**:
+
 1. Send: `apa itu spotify?`
 2. AI should explain Spotify with details
 3. Ask follow-up: `berapa harganya?`
 4. AI should answer with price
 
 **Test Recommendations**:
+
 1. Send: `kasih saran produk musik`
 2. AI should recommend Spotify + YouTube Premium
 3. Send: `mau yang film`
 4. AI should recommend Netflix + Disney+
 
 **Test Admin Generator**:
+
 1. Send as admin: `/generate-desc netflix`
 2. AI should generate title, description, features, CTA
 3. Copy and verify output quality
@@ -428,11 +453,13 @@ npm test -- tests/unit/handlers/AIHandler.test.js
 ### 1. Minimize Token Usage
 
 **Prompts**:
+
 - Keep system prompts concise (<200 tokens)
 - Limit product catalog in context (top 10 popular)
 - Use structured outputs (JSON) for predictable parsing
 
 **Settings**:
+
 ```javascript
 maxTokens: 500,        // Limit response length
 temperature: 0.3,      // Low = consistent, predictable
@@ -441,11 +468,13 @@ temperature: 0.3,      // Low = consistent, predictable
 ### 2. Caching Strategy
 
 **What to cache**:
+
 - Common questions ("apa itu netflix?")
 - Product comparisons
 - Generic recommendations
 
 **What NOT to cache**:
+
 - Personalized recommendations (cart-based)
 - Time-sensitive info (stock levels)
 - User-specific data
@@ -453,6 +482,7 @@ temperature: 0.3,      // Low = consistent, predictable
 ### 3. Lazy Loading
 
 AIHandler only initializes when:
+
 - FuzzySearch confidence < 0.6
 - Question word detected
 - Recommendation requested
@@ -477,6 +507,7 @@ Track these in production:
 ### Logging
 
 AIService logs:
+
 ```
 [INFO] AI Tool: searchProducts("netflx")
 [INFO] AI cache hit: 6281234567890@c.us:apa itu netflix
@@ -488,6 +519,7 @@ AIService logs:
 ### Alerts
 
 Set up alerts for:
+
 - Daily cost > $5
 - Error rate > 10%
 - Rate limit violations > 50/day
@@ -500,23 +532,25 @@ Set up alerts for:
 ### 1. Multi-language Support
 
 Add English, Chinese, Japanese prompts:
+
 ```javascript
 const prompts = {
-  id: { system: '...' }, // Indonesian (current)
-  en: { system: 'You are a helpful shopping assistant...' },
-  zh: { system: '你是一个有帮助的购物助手...' },
+  id: { system: "..." }, // Indonesian (current)
+  en: { system: "You are a helpful shopping assistant..." },
+  zh: { system: "你是一个有帮助的购物助手..." },
 };
 ```
 
 ### 2. Conversation Memory
 
 Remember conversation context across messages:
+
 ```javascript
 // Store last 5 messages in session
 session.conversationHistory = [
-  { role: 'user', content: 'apa itu netflix?' },
-  { role: 'assistant', content: 'Netflix adalah...' },
-  { role: 'user', content: 'berapa harganya?' },
+  { role: "user", content: "apa itu netflix?" },
+  { role: "assistant", content: "Netflix adalah..." },
+  { role: "user", content: "berapa harganya?" },
   // AI uses context to answer "Harganya Rp 15,800"
 ];
 ```
@@ -524,6 +558,7 @@ session.conversationHistory = [
 ### 3. A/B Testing
 
 Compare AI vs manual responses:
+
 - Group A: AI fallback enabled
 - Group B: Manual "product not found" message
 - Metric: Conversion rate
@@ -531,6 +566,7 @@ Compare AI vs manual responses:
 ### 4. Fine-tuning
 
 Train custom model on:
+
 - Actual customer conversations
 - Product catalog specifics
 - Common Q&A patterns
@@ -540,6 +576,7 @@ Train custom model on:
 ### 5. Voice Support
 
 Integrate with WhatsApp voice messages:
+
 1. Transcribe audio to text (Whisper API)
 2. Process with AI
 3. Respond with text or TTS audio
@@ -553,6 +590,7 @@ Integrate with WhatsApp voice messages:
 **Symptoms**: Customer message ignored, no AI fallback.
 
 **Checklist**:
+
 1. `AI_ENABLE=true` in `.env`?
 2. `GOOGLE_API_KEY` set correctly?
 3. Check logs for errors
@@ -564,6 +602,7 @@ Integrate with WhatsApp voice messages:
 **Symptoms**: Daily cost alert triggered.
 
 **Solutions**:
+
 1. Lower `AI_RATE_LIMIT_HOURLY` from 5 to 3
 2. Increase cache TTL: `cache.ttl: 7200` (2 hours)
 3. Reduce `AI_MAX_TOKENS` from 500 to 300
@@ -574,6 +613,7 @@ Integrate with WhatsApp voice messages:
 **Symptoms**: AI gives irrelevant or incorrect answers.
 
 **Solutions**:
+
 1. Review prompt engineering in `ai.config.js`
 2. Add more context to `buildContextMessage()`
 3. Increase temperature: `0.3 → 0.5` (more creative)
@@ -584,6 +624,7 @@ Integrate with WhatsApp voice messages:
 **Symptoms**: Customers see "terlalu banyak" message frequently.
 
 **Solutions**:
+
 1. Increase limits (be mindful of costs):
    ```bash
    AI_RATE_LIMIT_HOURLY=10
@@ -599,6 +640,7 @@ Integrate with WhatsApp voice messages:
 ### 1. API Key Protection
 
 **Never commit** `.env` file to Git:
+
 ```bash
 # .gitignore
 .env
@@ -606,6 +648,7 @@ Integrate with WhatsApp voice messages:
 ```
 
 **Rotate keys** every 90 days:
+
 1. Generate new key
 2. Update `.env`
 3. Restart bot
@@ -614,6 +657,7 @@ Integrate with WhatsApp voice messages:
 ### 2. Input Validation
 
 All customer messages sanitized before AI:
+
 ```javascript
 // InputValidator.sanitizeMessage() in lib/inputValidator.js
 message = message.trim().toLowerCase();
@@ -623,6 +667,7 @@ message = message.trim().toLowerCase();
 ### 3. Rate Limiting
 
 Protects against:
+
 - Spam attacks
 - Cost exploitation
 - API abuse
@@ -630,6 +675,7 @@ Protects against:
 ### 4. Logging & Auditing
 
 All AI calls logged with:
+
 - Customer ID (hashed)
 - Message content
 - Timestamp
@@ -644,6 +690,7 @@ All AI calls logged with:
 
 **Q: Can I use OpenAI instead of Gemini?**  
 A: Yes! Change `ai.config.js`:
+
 ```javascript
 const { openai } = require('@ai-sdk/openai');
 model: openai('gpt-4o-mini'),
@@ -666,6 +713,7 @@ A: Only the message content for processing. No personal data (phone numbers) sen
 ## Support
 
 For issues or questions:
+
 - **Documentation**: This file + inline code comments
 - **Logs**: Check `logs/` directory
 - **Tests**: Run `npm test` to verify setup

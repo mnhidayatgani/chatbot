@@ -240,6 +240,7 @@ Enable AI-powered features for enhanced customer experience:
 1. **Get Google AI API Key**: Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 2. **Configure `.env`**:
+
    ```bash
    AI_ENABLE=true
    GOOGLE_API_KEY=AIzaSyD...your_key_here
@@ -248,6 +249,7 @@ Enable AI-powered features for enhanced customer experience:
 3. **Restart bot**: `pm2 restart whatsapp-bot`
 
 **Features**:
+
 - Typo correction: "netflx" → "netflix"
 - Product Q&A: "apa bedanya netflix sama spotify?"
 - Smart recommendations: "kasih saran produk musik"
