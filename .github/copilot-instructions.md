@@ -91,8 +91,11 @@ chatbot/
 - `session/RedisStorage.js` - Redis persistence implementation
 - `session/MemoryStorage.js` - In-memory fallback storage
 - `payment/PaymentService.js` - Payment abstraction
+- `payment/PaymentReminderService.js` - Automated payment reminders (cron-based)
 - `product/ProductService.js` - Product operations
 - `product/StockManager.js` - Stock tracking and validation
+- `order/OrderService.js` - Order tracking and history (NEW)
+- `wishlist/WishlistService.js` - Wishlist/favorites management (NEW)
 
 **Configuration** (`src/config/`):
 
@@ -435,7 +438,7 @@ Detect language from first message or add `/language` command
    - Send to customer: `client.sendMessage(customerId, 'Your credentials:\nEmail: ...\nPassword: ...')`
    - For VCC: integrate with card issuer API or send pre-generated card details
    - Log delivery: append to `deliveries.log` for accounting
-4. **WhatsApp rate limits** - too many messages too fast can trigger disconnects. The bot doesn't implement rate limiting.
+4. **WhatsApp rate limits** - Implemented! Rate limiting: 20 messages/minute per customer with auto-reset. Protects from bans.
 5. **Group messages are ignored** - bot only responds to direct messages (1:1 chats).
 6. **Media messages require special handling** - `message.hasMedia` must be checked separately. Download with `await message.downloadMedia()`. Send with `MessageMedia.fromFilePath(path)` or `MessageMedia.fromUrl(url)`. Supports images (QRIS), documents (invoices), audio (voice notes for support).
 7. **WhatsApp Web session can expire** - monitor `disconnected` event. Implement auto-reconnect: `client.initialize()` with exponential backoff. Store QR auth in `.wwebjs_auth/` - backup this directory daily.
@@ -443,12 +446,41 @@ Detect language from first message or add `/language` command
 
 ## File-Specific Notes
 
-**index.js:** Entry point. Handles WhatsApp lifecycle (qr, ready, authenticated, disconnected, error events). Sets up SIGINT/SIGTERM handlers for graceful shutdown. PM2-friendly.
+**index.js:** Entry point. Handles WhatsApp lifecycle (qr, ready, authenticated, disconnected, error events). Sets up SIGINT/SIGTERM handlers for graceful shutdown. PM2-friendly. Initializes PaymentReminderService and cleanup intervals.
 
 **chatbotLogic.js:** Pure business logic. No WhatsApp dependencies - receives message string, returns response string. This makes testing trivial.
 
-**sessionManager.js:** Trivial key-value store wrapping a Map. Every method takes customerId (phone number like "1234567890@c.us"). Auto-updates lastActivity timestamp.
+**sessionManager.js:** Key-value store wrapping a Map. Every method takes customerId (phone number like "1234567890@c.us"). Auto-updates lastActivity timestamp. Includes rate limiting (20 msg/min). Session schema includes `cart: []`, `wishlist: []`, `step`, `orderId`, payment fields.
 
 **config.js:** Static catalog. Uses `process.env` for stock defaults but has fallbacks. `formatProductList()` generates the browsing UI.
 
 **test.js:** Standalone script (no test framework). Run with `node test.js`. All assertions are implicit (script succeeds or throws).
+
+## Recent Features (Phase 1 & 2)
+
+**Phase 1: Quick Wins (✅ COMPLETE)**
+
+- ✅ Order Tracking: `/track` command with status filters (pending, completed)
+- ✅ Rate Limiting: 20 messages/minute per customer
+- ✅ Auto Screenshot Detection: Image upload → Order ID prompt
+- ✅ Payment Reminders: Cron job (_/15 _ \* \* \*) with 30min & 2h reminders
+- ✅ Webhook Auto-Retry: Exponential backoff (1s→16s, max 5 retries)
+
+**Phase 2: Medium Priority (🔄 IN PROGRESS)**
+
+- ✅ **Wishlist/Favorites (COMPLETE):**
+  - Commands: `simpan <product>` or `⭐ <product>`, `/wishlist`, `hapus <product>`
+  - Storage: Session-based with Redis persistence
+  - Features: Add, view, remove, move to cart
+  - Tests: 25/25 passing
+  - Service: `WishlistService.js` (264 lines)
+  - Integration: CustomerHandler, MessageRouter, UIMessages
+- 🔲 **Promo Code System (NEXT):**
+  - Admin: `/createpromo CODE DISCOUNT DAYS`
+  - Customer: `promo CODE` during checkout
+  - Features: Expiry validation, usage tracking, discount calculation
+- 🔲 **Product Reviews:**
+  - Command: `/review netflix 5 Mantap!`
+  - Features: Star ratings, review text, average ratings in product list
+- 🔲 **Enhanced Admin Dashboard:**
+  - Revenue by payment method, top 5 products, retention rate, ASCII graphs

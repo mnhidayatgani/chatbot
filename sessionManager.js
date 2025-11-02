@@ -79,6 +79,7 @@ class SessionManager {
       const newSession = {
         customerId,
         cart: [],
+        wishlist: [], // Wishlist feature (Phase 2)
         step: "menu",
         orderId: null,
         qrisInvoiceId: null,
