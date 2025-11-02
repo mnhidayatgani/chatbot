@@ -76,8 +76,16 @@ function getAllProducts() {
  * @returns {Object|null} Product object or null if not found
  */
 function getProductById(productId) {
-  const allProducts = getAllProducts();
-  return allProducts.find((p) => p.id === productId) || null;
+  // Search directly in the original arrays to enable stock modification
+  const premiumProduct = products.premiumAccounts.find(
+    (p) => p.id === productId
+  );
+  if (premiumProduct) return premiumProduct;
+
+  const vccProduct = products.virtualCards.find((p) => p.id === productId);
+  if (vccProduct) return vccProduct;
+
+  return null;
 }
 
 /**

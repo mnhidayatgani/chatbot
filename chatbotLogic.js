@@ -355,10 +355,7 @@ class ChatbotLogic {
     this.logger.logOrder(customerId, orderId, cart, totalUSD, totalIDR);
 
     const orderSummary = UIMessages.orderSummary(orderId, cart, totalIDR);
-    const paymentMenu = PaymentMessages.paymentMethodSelection(
-      orderId,
-      totalIDR
-    );
+    const paymentMenu = PaymentMessages.paymentMethodSelection(orderId);
 
     return {
       message: orderSummary + paymentMenu,
@@ -397,7 +394,7 @@ class ChatbotLogic {
 
     const approveOrderId = parts[1];
     const targetCustomerId =
-      this.sessionManager.findCustomerByOrderId(approveOrderId);
+      await this.sessionManager.findCustomerByOrderId(approveOrderId);
 
     if (!targetCustomerId) {
       return UIMessages.orderNotFound(approveOrderId);
@@ -568,7 +565,7 @@ class ChatbotLogic {
                   revenueMonth += revenue;
                 }
               }
-            } catch (_e) {
+            } catch {
               errorCount++;
             }
           });
@@ -589,7 +586,7 @@ class ChatbotLogic {
             try {
               JSON.parse(line);
               errorCount++;
-            } catch (_e) {
+            } catch {
               // Ignore parse errors
             }
           });
@@ -745,7 +742,7 @@ class ChatbotLogic {
                   status: "completed", // Default status
                 });
               }
-            } catch (_e) {
+            } catch {
               // Skip invalid lines
             }
           });
@@ -857,6 +854,36 @@ class ChatbotLogic {
       console.error("❌ Error initiating broadcast:", error);
       return `❌ *Error Broadcast*\n\n${error.message}`;
     }
+  }
+
+  /**
+   * Handle payment proof upload
+   * @param {string} customerId
+   * @returns {Object} Response with confirmation message
+   */
+  async handlePaymentProof(customerId) {
+    const orderId = await this.sessionManager.getOrderId(customerId);
+    const cart = await this.sessionManager.getCart(customerId);
+
+    // Set to awaiting admin approval
+    await this.sessionManager.setStep(customerId, "awaiting_admin_approval");
+
+    // Log payment proof upload
+    this.logger.logAdminAction(
+      customerId,
+      "payment_proof_uploaded",
+      orderId,
+      {
+        timestamp: new Date().toISOString(),
+      }
+    );
+
+    return {
+      message: `✅ *Bukti Pembayaran Diterima!*\n\nOrder ID: ${orderId}\n\nBukti pembayaran Anda telah diterima dan sedang diverifikasi oleh admin.\n\n⏱️ Waktu verifikasi: 5-15 menit\n\nAnda akan menerima notifikasi setelah pembayaran diverifikasi.`,
+      forwardToAdmin: true,
+      orderId: orderId,
+      cart: cart,
+    };
   }
 }
 

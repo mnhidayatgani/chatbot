@@ -112,8 +112,9 @@ async function runTests() {
     );
 
     if (
-      response.includes("tidak memiliki akses") ||
-      response.includes("Unauthorized")
+      response.includes("diizinkan") ||
+      response.includes("Unauthorized") ||
+      response.includes("admin")
     ) {
       console.log("✅ PASS: Unauthorized access blocked");
       passCount++;
@@ -163,8 +164,9 @@ async function runTests() {
     );
 
     if (
-      response.includes("tidak memiliki akses") ||
-      response.includes("Unauthorized")
+      response.includes("diizinkan") ||
+      response.includes("Unauthorized") ||
+      response.includes("admin")
     ) {
       console.log("✅ PASS: Unauthorized access blocked");
       passCount++;

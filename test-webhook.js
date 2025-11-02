@@ -9,8 +9,8 @@ const http = require("http");
 const mockSessionManager = {
   useRedis: false,
   sessions: new Map(),
-  async initialize() {},
-  async getSession(customerId) {
+  initialize() {},
+  getSession(customerId) {
     if (!this.sessions.has(customerId)) {
       this.sessions.set(customerId, {
         customerId,
@@ -48,7 +48,7 @@ const mockChatbotLogic = {};
 
 const mockWhatsappClient = {
   info: { wid: { user: "6281234567890" } },
-  async sendMessage(customerId, message) {
+  sendMessage(customerId, message) {
     console.log(
       `📤 Mock send to ${customerId}: ${message.substring(0, 50)}...`
     );
@@ -156,7 +156,7 @@ async function testWebhook() {
     if (webhookServer) {
       try {
         await webhookServer.stop();
-      } catch (e) {
+      } catch {
         // Ignore cleanup errors
       }
     }
@@ -193,7 +193,7 @@ function makeRequest(method, path, body = null, headers = {}) {
           const parsed = JSON.parse(data);
           parsed.statusCode = res.statusCode;
           resolve(parsed);
-        } catch (e) {
+        } catch {
           resolve({ statusCode: res.statusCode, raw: data });
         }
       });

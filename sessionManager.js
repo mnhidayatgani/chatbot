@@ -327,7 +327,7 @@ class SessionManager {
   /**
    * Clean up inactive sessions (older than 30 minutes)
    */
-  async cleanupSessions() {
+  cleanupSessions() {
     const now = Date.now();
 
     // Clean in-memory sessions
@@ -356,20 +356,21 @@ class SessionManager {
    * When Redis is enabled, returns accurate count by scanning Redis keys.
    */
   async getActiveSessionCount() {
-    if (this.useRedis) {
+    if (this.useRedis && redisClient.isReady()) {
       try {
         // Use Redis SCAN to count session keys matching "session:*"
-        let cursor = "0";
+        const client = redisClient.getClient();
+        let cursor = 0;
         let count = 0;
         do {
           // SCAN with match pattern and reasonable count per batch
-          const result = await redisClient.scan(cursor, {
+          const result = await client.scan(cursor, {
             MATCH: "session:*",
             COUNT: 100,
           });
           cursor = result.cursor;
           count += result.keys.length;
-        } while (cursor !== "0");
+        } while (cursor !== 0);
         return count;
       } catch (error) {
         // Fallback to in-memory count on error
@@ -389,13 +390,14 @@ class SessionManager {
    * @returns {Promise<Array>} Array of customer IDs
    */
   async getAllCustomerIds() {
-    if (this.useRedis) {
+    if (this.useRedis && redisClient.isReady()) {
       try {
         // Use Redis SCAN to get all session keys
-        let cursor = "0";
+        const client = redisClient.getClient();
+        let cursor = 0;
         const customerIds = new Set(Array.from(this.sessions.keys()));
         do {
-          const result = await redisClient.scan(cursor, {
+          const result = await client.scan(cursor, {
             MATCH: "session:*",
             COUNT: 100,
           });
@@ -407,7 +409,7 @@ class SessionManager {
               customerIds.add(match[1]);
             }
           }
-        } while (cursor !== "0");
+        } while (cursor !== 0);
         return Array.from(customerIds);
       } catch (error) {
         console.error(

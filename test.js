@@ -96,9 +96,11 @@ async function runTests() {
     // Test checkout
     response = await chatbot.processMessage(testCustomerId, "checkout");
     console.log("✓ Checkout command processed");
+    const checkoutMessage =
+      typeof response === "string" ? response : response.message;
     console.log(
       '  Contains "ORDER":',
-      response.includes("ORDER") || response.includes("KONFIRMASI")
+      checkoutMessage.includes("ORDER") || checkoutMessage.includes("KONFIRMASI")
     );
 
     cart = await sessionManager.getCart(testCustomerId);

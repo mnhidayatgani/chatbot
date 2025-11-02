@@ -39,10 +39,7 @@ async function runComprehensiveTests() {
   try {
     await sessionManager.clearCart(testCustomerId);
     await sessionManager.setStep(testCustomerId, "browsing");
-    const response = await chatbotLogic.processMessage(
-      testCustomerId,
-      "netfl!x@#"
-    );
+    await chatbotLogic.processMessage(testCustomerId, "netfl!x@#");
     // Should either match or say not found, but not crash
     console.log("✅ PASS: Special characters handled without crash");
     passCount++;
@@ -57,10 +54,7 @@ async function runComprehensiveTests() {
     await sessionManager.clearCart(testCustomerId);
     await sessionManager.setStep(testCustomerId, "browsing");
     const longQuery = "a".repeat(100);
-    const response = await chatbotLogic.processMessage(
-      testCustomerId,
-      longQuery
-    );
+    await chatbotLogic.processMessage(testCustomerId, longQuery);
     console.log("✅ PASS: Long query handled without crash");
     passCount++;
   } catch (error) {
@@ -279,7 +273,7 @@ async function runComprehensiveTests() {
     failCount++;
   }
 
-  await sessionManager.cleanup();
+  sessionManager.cleanupSessions();
 
   console.log("\n" + "=".repeat(50));
   console.log("📊 Comprehensive Test Summary");

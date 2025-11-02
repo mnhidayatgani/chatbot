@@ -5,7 +5,6 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const crypto = require("crypto");
 
 class WebhookServer {
   constructor(sessionManager, chatbotLogic, whatsappClient) {
@@ -279,7 +278,7 @@ class WebhookServer {
    * Handle expired payment
    * @param {Object} payload
    */
-  async handlePaymentExpired(payload) {
+  handlePaymentExpired(payload) {
     const invoiceId = payload.id || payload.external_id;
     console.log(`⏰ Payment expired: ${invoiceId}`);
 
@@ -291,7 +290,7 @@ class WebhookServer {
    * Handle failed payment
    * @param {Object} payload
    */
-  async handlePaymentFailed(payload) {
+  handlePaymentFailed(payload) {
     const invoiceId = payload.id || payload.external_id;
     console.log(`❌ Payment failed: ${invoiceId}`);
 
@@ -316,7 +315,7 @@ class WebhookServer {
   /**
    * Stop webhook server
    */
-  async stop() {
+  stop() {
     if (this.server) {
       return new Promise((resolve) => {
         this.server.close(() => {

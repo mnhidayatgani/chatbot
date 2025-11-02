@@ -36,7 +36,7 @@ function section(title) {
   console.log("━".repeat(60) + "\n");
 }
 
-async function testXenditConfiguration() {
+function testXenditConfiguration() {
   section("1. Testing Xendit Configuration");
 
   if (!process.env.XENDIT_SECRET_KEY) {
