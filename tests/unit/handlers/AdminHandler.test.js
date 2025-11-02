@@ -14,7 +14,7 @@ class MockSessionManager {
     return Array.from(this.sessions.values());
   }
 
-  getSession(customerId) {
+  async getSession(customerId) {
     if (!this.sessions.has(customerId)) {
       this.sessions.set(customerId, {
         customerId,
@@ -27,9 +27,24 @@ class MockSessionManager {
     return this.sessions.get(customerId);
   }
 
-  setStep(customerId, step) {
-    const session = this.getSession(customerId);
+  async setStep(customerId, step) {
+    const session = await this.getSession(customerId);
     session.step = step;
+  }
+
+  async getStep(customerId) {
+    const session = await this.getSession(customerId);
+    return session.step;
+  }
+
+  async setData(customerId, data) {
+    const session = await this.getSession(customerId);
+    session.data = data;
+  }
+
+  async getData(customerId) {
+    const session = await this.getSession(customerId);
+    return session.data || {};
   }
 }
 
