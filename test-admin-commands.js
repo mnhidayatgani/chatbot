@@ -52,9 +52,6 @@ async function runTests() {
   // Setup: Create mock order logs
   console.log("📁 Creating mock order logs...");
   const todayStr = new Date().toISOString().split("T")[0];
-  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split("T")[0];
 
   createMockOrderLog(`test-orders-${todayStr}.log`, [
     {

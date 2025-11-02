@@ -352,13 +352,33 @@ class SessionManager {
 
   /**
    * Get count of active sessions
-   * @returns {number} Active session count
+   * @returns {Promise<number>} Active session count
+   * When Redis is enabled, returns accurate count by scanning Redis keys.
    */
-  getActiveSessionCount() {
+  async getActiveSessionCount() {
     if (this.useRedis) {
-      // For Redis, we can't easily count without scanning all keys
-      // Return in-memory count as estimate
-      return this.sessions.size;
+      try {
+        // Use Redis SCAN to count session keys matching "session:*"
+        let cursor = "0";
+        let count = 0;
+        do {
+          // SCAN with match pattern and reasonable count per batch
+          const result = await redisClient.scan(cursor, {
+            MATCH: "session:*",
+            COUNT: 100,
+          });
+          cursor = result.cursor;
+          count += result.keys.length;
+        } while (cursor !== "0");
+        return count;
+      } catch (error) {
+        // Fallback to in-memory count on error
+        console.error(
+          "Redis SCAN error, using in-memory count:",
+          error.message
+        );
+        return this.sessions.size;
+      }
     }
     return this.sessions.size;
   }

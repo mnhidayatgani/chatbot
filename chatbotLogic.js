@@ -199,23 +199,29 @@ class ChatbotLogic {
     let bestScore = Infinity;
     const threshold = 3; // Max allowed distance
 
-    products.forEach((product) => {
-      const nameDistance = this.levenshteinDistance(
-        product.name.toLowerCase(),
-        queryLower
-      );
-      const idDistance = this.levenshteinDistance(
-        product.id.toLowerCase(),
-        queryLower
-      );
+    for (let i = 0; i < products.length; i++) {
+      const product = products[i];
+      // Cache lowercased name and id
+      const nameLower = product.name.toLowerCase();
+      const idLower = product.id.toLowerCase();
+
+      const nameDistance = this.levenshteinDistance(nameLower, queryLower);
+      const idDistance = this.levenshteinDistance(idLower, queryLower);
 
       const minDistance = Math.min(nameDistance, idDistance);
+
+      if (minDistance === 0) {
+        // Perfect match, break early
+        bestMatch = product;
+        bestScore = 0;
+        break;
+      }
 
       if (minDistance < bestScore && minDistance <= threshold) {
         bestScore = minDistance;
         bestMatch = product;
       }
-    });
+    }
 
     return bestMatch;
   }
