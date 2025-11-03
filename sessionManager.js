@@ -428,14 +428,15 @@ class SessionManager {
       try {
         // Use Redis SCAN to get all session keys
         const client = redisClient.getClient();
-        let cursor = 0;
+        let cursor = '0'; // Redis SCAN cursor must be string
         const customerIds = new Set(Array.from(this.sessions.keys()));
         do {
           const result = await client.scan(cursor, {
             MATCH: "session:*",
             COUNT: 100,
           });
-          cursor = result.cursor;
+          cursor = result.cursor; // Redis returns cursor as number, convert if needed
+          cursor = String(cursor); // Ensure cursor is always string for next iteration
           for (const key of result.keys) {
             // Extract customerId from "session:1234567890@c.us"
             const match = key.match(/^session:(.+)$/);
@@ -443,7 +444,7 @@ class SessionManager {
               customerIds.add(match[1]);
             }
           }
-        } while (cursor !== 0);
+        } while (cursor !== '0');
         return Array.from(customerIds);
       } catch (error) {
         console.error(

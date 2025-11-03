@@ -27,6 +27,7 @@ const clientOptions = {
   authStrategy: new LocalAuth(),
   puppeteer: {
     headless: true,
+    timeout: 60000, // 60 seconds timeout
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -38,6 +39,8 @@ const clientOptions = {
       "--disable-gpu",
     ],
   },
+  // Add more specific options for stability
+  qrMaxRetries: 5,
 };
 
 // Add pairing code configuration if enabled
@@ -70,11 +73,30 @@ const messageRouter = new MessageRouter(client, sessionManager, chatbotLogic);
 
     // Start WhatsApp client after initialization
     console.log("🚀 Initializing WhatsApp client...");
+    console.log("⏱️  This may take 30-60 seconds...");
+    
+    // Set a timeout for initialization
+    const initTimeout = setTimeout(() => {
+      console.warn("⚠️  WhatsApp client initialization taking longer than expected");
+      console.warn("💡 This is normal for first-time setup or after session cleanup");
+    }, 30000);
+    
     await client.initialize();
+    clearTimeout(initTimeout);
     console.log("✅ WhatsApp client initialization started!");
   } catch (error) {
     console.error("❌ Initialization error:", error);
-    console.error(error.stack);
+    console.error("🔍 Error details:", error.message);
+    console.error("📋 Stack trace:", error.stack);
+    
+    // Check common issues
+    if (error.message?.includes("Protocol error")) {
+      console.error("💡 Tip: Try removing .wwebjs_auth and .wwebjs_cache folders");
+    }
+    if (error.message?.includes("timeout")) {
+      console.error("💡 Tip: Increase puppeteer timeout or check internet connection");
+    }
+    
     process.exit(1);
   }
 })();

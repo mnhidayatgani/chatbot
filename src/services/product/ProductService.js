@@ -186,7 +186,8 @@ class ProductService {
         console.log(`[ProductService] Stock for ${product.id} from config (static): ${stock}`);
       }
       
-      const stockStatus = stock > 0 ? `✅ (${stock})` : "❌ Stok Habis";
+      const stockStatus = stock > 0 ? `✅ Stock: ${stock}` : "❌ Stok Habis";
+      console.log(`[ProductService] Premium - ${product.name}: ${stockStatus}`);
 
       message += `${index + 1}. ${product.name}\n`;
       message += `   💰 ${priceIDR}\n`;
@@ -220,7 +221,8 @@ class ProductService {
         console.log(`[ProductService] Stock for ${product.id} from config (static): ${stock}`);
       }
       
-      const stockStatus = stock > 0 ? `✅ (${stock})` : "❌ Stok Habis";
+      const stockStatus = stock > 0 ? `✅ Stock: ${stock}` : "❌ Stok Habis";
+      console.log(`[ProductService] VCC - ${product.name}: ${stockStatus}`);
 
       message += `${index + 1}. ${product.name}\n`;
       message += `   💰 ${priceIDR}\n`;
