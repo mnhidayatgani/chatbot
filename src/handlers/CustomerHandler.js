@@ -4,7 +4,11 @@
  */
 
 const BaseHandler = require("./BaseHandler");
-const { getProductById, getAllProducts, stockManager } = require("../../config");
+const {
+  getProductById,
+  getAllProducts,
+  stockManager,
+} = require("../../config");
 const UIMessages = require("../../lib/uiMessages");
 const FuzzySearch = require("../utils/FuzzySearch");
 const { SessionSteps } = require("../utils/Constants");
@@ -51,10 +55,15 @@ class CustomerHandler extends BaseHandler {
 
     try {
       // Global commands accessible from any step
-      if (message === "menu" || message === "help") {
-        console.log(`[CustomerHandler] -> Global command: menu/help`);
+      if (message === "menu") {
+        console.log(`[CustomerHandler] -> Global command: menu`);
         await this.setStep(customerId, SessionSteps.MENU);
         return UIMessages.mainMenu();
+      }
+
+      if (message === "help" || message === "/help") {
+        console.log(`[CustomerHandler] -> Global command: help`);
+        return UIMessages.helpCommand();
       }
 
       if (message === "cart") {
@@ -164,7 +173,11 @@ class CustomerHandler extends BaseHandler {
    * Show available products
    */
   async showProducts() {
-    console.log(`[CustomerHandler] showProducts() - stockManager: ${stockManager ? 'YES' : 'NO'}`);
+    console.log(
+      `[CustomerHandler] showProducts() - stockManager: ${
+        stockManager ? "YES" : "NO"
+      }`
+    );
     const productList = await this.productService.formatProductList(
       this.reviewService,
       stockManager
