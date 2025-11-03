@@ -114,9 +114,42 @@ Kirim lagi untuk tambah, atau "done" untuk selesai.
 
 ---
 
-### 3. Stock Report
+### 3. Sync Stock from Folder
 
-Lihat stok semua produk.
+**PENTING:** Sync otomatis berjalan saat bot startup. Command ini untuk manual sync.
+
+Sinkronkan stok dari folder `products_data/` ke Redis. Sistem akan menghitung jumlah baris di setiap file `.txt` dan update Redis.
+
+**Command:**
+
+```
+/syncstock
+```
+
+**Response:**
+
+```
+✅ Synced from products_data/: 3 updated, 4 unchanged
+
+🔄 Produk yang diupdate:
+  • netflix: 0 → 10
+  • spotify: 5 → 8
+  • youtube-premium: 0 → 3
+
+✔️  4 produk tidak berubah
+```
+
+**Kapan menggunakan:**
+
+- Setelah manual menambah file credentials ke `products_data/`
+- Setelah order diproses dan file berkurang
+- Untuk verify stock sesuai dengan file fisik
+
+---
+
+### 4. Stock Report
+
+Lihat stok semua produk dari Redis.
 
 **Command:**
 
@@ -146,7 +179,7 @@ Lihat stok semua produk.
 
 ---
 
-### 4. Sales Report
+### 5. Sales Report
 
 Laporan penjualan dalam periode tertentu.
 

@@ -1,1 +1,10 @@
-
+netflix1@example.com:password123
+netflix2@example.com:password456
+netflix3@example.com:password789
+netflix4@example.com:password101
+netflix5@example.com:password102
+netflix6@example.com:password103
+netflix7@example.com:password104
+netflix8@example.com:password105
+netflix9@example.com:password106
+netflix10@example.com:password107

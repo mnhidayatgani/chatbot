@@ -179,11 +179,30 @@ function getAllSettings() {
 }
 
 /**
- * Initialize stock manager
+ * Initialize stock manager and sync from products_data/
  * @returns {Promise<void>}
  */
 async function initializeStockManager() {
   await stockManager.initialize();
+  
+  // Auto-sync stock from products_data/ folder (SOURCE OF TRUTH)
+  console.log("🔄 Syncing stock from products_data/ folder...");
+  const syncResult = await stockManager.syncFromProductsDataFolder();
+  
+  if (syncResult.success) {
+    console.log(`✅ ${syncResult.message}`);
+    if (syncResult.updated > 0) {
+      console.log("📊 Stock updated from physical files:");
+      syncResult.results
+        .filter(r => r.changed)
+        .forEach(r => {
+          console.log(`   - ${r.productId}: ${r.oldStock} → ${r.newStock} (${r.file})`);
+        });
+    }
+  } else {
+    console.warn(`⚠️  Stock sync warning: ${syncResult.message}`);
+    console.warn("💡 Stock will use Redis values. Add files to products_data/ folder.");
+  }
 }
 
 /**
@@ -221,6 +240,15 @@ async function resetAllStock(confirm = false) {
   return await stockManager.resetAllStock(confirm);
 }
 
+/**
+ * Sync stock from products_data/ folder (admin only)
+ * Counts lines in .txt files and updates Redis
+ * @returns {Promise<Object>}
+ */
+async function syncStockFromFolder() {
+  return await stockManager.syncFromProductsDataFolder();
+}
+
 module.exports = {
   // Configs
   systemSettings,
@@ -244,6 +272,7 @@ module.exports = {
   initializeStockManager,
   getAllProductsWithStock,
   syncStockFromConfig,
+  syncStockFromFolder,
   resetAllStock,
   stockManager,
 };

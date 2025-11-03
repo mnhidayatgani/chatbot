@@ -86,6 +86,8 @@ class AdminHandler extends BaseHandler {
         this.inventoryHandler.handleAddStockBulk(adminId, msg),
       "/addstock": (adminId, msg) =>
         this.inventoryHandler.handleAddStock(adminId, msg),
+      "/syncstock": (adminId) =>
+        this.inventoryHandler.handleSyncStock(adminId),
       "/stockreport": (adminId) =>
         this.inventoryHandler.handleStockReport(adminId),
       "/salesreport": (adminId, msg) =>

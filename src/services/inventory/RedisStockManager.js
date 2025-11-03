@@ -424,6 +424,93 @@ class RedisStockManager {
 
     return await this.syncFromConfig(true);
   }
+
+  /**
+   * Sync stock from products_data/ folder (count lines in .txt files)
+   * This is the SOURCE OF TRUTH for physical stock
+   * @returns {Promise<Object>}
+   */
+  async syncFromProductsDataFolder() {
+    try {
+      const fs = require('fs').promises;
+      const fsSync = require('fs');
+      const path = require('path');
+      const productsDataDir = './products_data';
+
+      // Check if directory exists
+      if (!fsSync.existsSync(productsDataDir)) {
+        return {
+          success: false,
+          message: `❌ Directory not found: ${productsDataDir}`,
+        };
+      }
+
+      // Read all .txt files
+      const files = await fs.readdir(productsDataDir);
+      const txtFiles = files.filter(file => file.endsWith('.txt'));
+
+      const syncResults = [];
+      let updatedCount = 0;
+      let unchangedCount = 0;
+
+      for (const file of txtFiles) {
+        const productId = file.replace('.txt', '');
+        const filepath = path.join(productsDataDir, file);
+
+        try {
+          // Read file and count non-empty lines
+          const content = await fs.readFile(filepath, 'utf-8');
+          const lines = content.split('\n').filter(line => line.trim().length > 0);
+          const actualStock = lines.length;
+
+          // Get current Redis stock
+          const currentRedisStock = await this.getStock(productId);
+
+          // Update Redis if different
+          if (currentRedisStock !== actualStock) {
+            await this.setStock(productId, actualStock, 'sync_from_products_data');
+            syncResults.push({
+              productId,
+              file,
+              oldStock: currentRedisStock,
+              newStock: actualStock,
+              changed: true,
+            });
+            updatedCount++;
+            console.log(`🔄 Synced ${productId}: ${currentRedisStock} → ${actualStock}`);
+          } else {
+            syncResults.push({
+              productId,
+              file,
+              stock: actualStock,
+              changed: false,
+            });
+            unchangedCount++;
+          }
+        } catch (error) {
+          console.error(`❌ Error reading ${file}:`, error.message);
+          syncResults.push({
+            productId,
+            file,
+            error: error.message,
+          });
+        }
+      }
+
+      return {
+        success: true,
+        message: `✅ Synced from products_data/: ${updatedCount} updated, ${unchangedCount} unchanged`,
+        updated: updatedCount,
+        unchanged: unchangedCount,
+        results: syncResults,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `❌ Sync failed: ${error.message}`,
+      };
+    }
+  }
 }
 
 module.exports = RedisStockManager;

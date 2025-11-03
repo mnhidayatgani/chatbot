@@ -182,6 +182,36 @@ class AdminInventoryHandler extends BaseHandler {
   }
 
   /**
+   * /syncstock - Sync stock from products_data/ folder to Redis
+   */
+  async handleSyncStock(_adminId) {
+    const { syncStockFromFolder } = require("../../../config");
+
+    const result = await syncStockFromFolder();
+
+    if (result.success) {
+      let message = `✅ *${result.message}*\n\n`;
+
+      if (result.updated > 0) {
+        message += "*🔄 Produk yang diupdate:*\n";
+        result.results
+          .filter((r) => r.changed)
+          .forEach((r) => {
+            message += `  • ${r.productId}: ${r.oldStock} → ${r.newStock}\n`;
+          });
+      }
+
+      if (result.unchanged > 0) {
+        message += `\n✔️  ${result.unchanged} produk tidak berubah`;
+      }
+
+      return message;
+    } else {
+      return `❌ *Sync gagal:* ${result.message}`;
+    }
+  }
+
+  /**
    * /salesreport [days] - Show sales report
    */
   async handleSalesReport(adminId, message) {
