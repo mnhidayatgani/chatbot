@@ -3,15 +3,15 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for chatbot/lib/paymentHandlers.js</title>
+    <title>Code coverage report for chatbot/src/utils/InputSanitizer.js</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../prettify.css" />
-    <link rel="stylesheet" href="../../base.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(../../sort-arrow-sprite.png);
+            background-image: url(../../../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">chatbot/lib</a> paymentHandlers.js</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">chatbot/src/utils</a> InputSanitizer.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">68.26% </span>
+                <span class="strong">84.16% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>71/104</span>
+                <span class='fraction'>101/120</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">64.44% </span>
+                <span class="strong">83.48% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>29/45</span>
+                <span class='fraction'>91/109</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>8/10</span>
+                <span class='fraction'>17/17</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">67.64% </span>
+                <span class="strong">85.47% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>69/102</span>
+                <span class='fraction'>100/117</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -444,43 +444,73 @@
 <a name='L379'></a><a href='#L379'>379</a>
 <a name='L380'></a><a href='#L380'>380</a>
 <a name='L381'></a><a href='#L381'>381</a>
-<a name='L382'></a><a href='#L382'>382</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L382'></a><a href='#L382'>382</a>
+<a name='L383'></a><a href='#L383'>383</a>
+<a name='L384'></a><a href='#L384'>384</a>
+<a name='L385'></a><a href='#L385'>385</a>
+<a name='L386'></a><a href='#L386'>386</a>
+<a name='L387'></a><a href='#L387'>387</a>
+<a name='L388'></a><a href='#L388'>388</a>
+<a name='L389'></a><a href='#L389'>389</a>
+<a name='L390'></a><a href='#L390'>390</a>
+<a name='L391'></a><a href='#L391'>391</a>
+<a name='L392'></a><a href='#L392'>392</a>
+<a name='L393'></a><a href='#L393'>393</a>
+<a name='L394'></a><a href='#L394'>394</a>
+<a name='L395'></a><a href='#L395'>395</a>
+<a name='L396'></a><a href='#L396'>396</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">82x</span>
-<span class="cline-any cline-yes">82x</span>
-<span class="cline-any cline-yes">82x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">26x</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-yes">46x</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -493,6 +523,44 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -502,7 +570,48 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -514,305 +623,90 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">127x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">126x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">136x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">133x</span>
+<span class="cline-any cline-yes">133x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-yes">27x</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -825,387 +719,535 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">123x</span>
+<span class="cline-any cline-yes">107x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
- * Payment Handlers
- * Modular payment processing logic
+ * InputSanitizer - Security utility for input validation and sanitization
+ * Prevents XSS, SQL injection, command injection, and other security threats
  */
 &nbsp;
-const PaymentMessages = require("./paymentMessages");
+class InputSanitizer {
+  /**
+   * Sanitize text input - remove HTML/script tags, dangerous characters
+   * @param {string} input - Raw user input
+   * @param {number} maxLength - Maximum allowed length (default: 500)
+   * @returns {string} Sanitized input
+   */
+  static sanitizeText(input, maxLength = 500) {
+    if (!input || typeof input !== 'string') {
+      return '';
+    }
 &nbsp;
-class PaymentHandlers {
-  constructor(xenditService, sessionManager, logger = null) {
-    this.xenditService = xenditService;
-    this.sessionManager = sessionManager;
-    this.logger = logger;
+    let sanitized = input;
+&nbsp;
+    // Trim whitespace
+    sanitized = sanitized.trim();
+&nbsp;
+    // Truncate to max length
+    if (sanitized.length &gt; maxLength) {
+      sanitized = sanitized.substring(0, maxLength);
+    }
+&nbsp;
+    // Remove HTML tags
+    sanitized = sanitized.replace(/&lt;[^&gt;]*&gt;/g, '');
+&nbsp;
+    // Remove script tags and content
+    sanitized = sanitized.replace(/&lt;script\b[^&lt;]*(?:(?!&lt;\/script&gt;)&lt;[^&lt;]*)*&lt;\/script&gt;/gi, '');
+&nbsp;
+    // Remove dangerous characters for SQL injection
+    sanitized = sanitized.replace(/['";\\]/g, '');
+&nbsp;
+    // Remove command injection characters
+    sanitized = sanitized.replace(/[`$(){}[\]|&amp;;&lt;&gt;]/g, '');
+&nbsp;
+    // Normalize whitespace
+    sanitized = sanitized.replace(/\s+/g, ' ');
+&nbsp;
+    return sanitized;
   }
 &nbsp;
   /**
-   * Handle payment method selection
+   * Sanitize product ID - alphanumeric and hyphens only
+   * @param {string} productId - Product ID
+   * @returns {string} Sanitized product ID
    */
-  async handlePaymentSelection(customerId, choice) {
-    const session = await this.sessionManager.getSession(customerId);
-    const cart = session.cart;
-    const totalIDR = cart.reduce((sum, item) =&gt; sum + item.price, 0); // Price already in IDR
-    const orderId = session.orderId;
-&nbsp;
-    try {
-      switch (choice) {
-        case "1":
-        case "qris":
-          return await this.handleQRISPayment(customerId, orderId, totalIDR);
-&nbsp;
-        case "2":
-        case "dana":
-          return await this.handleEWalletPayment(
-            customerId,
-            orderId,
-            totalIDR,
-            "DANA"
-          );
-&nbsp;
-        case "3":
-        case "gopay":
-          return await this.handleEWalletPayment(
-            customerId,
-            orderId,
-            totalIDR,
-            "GOPAY"
-          );
-&nbsp;
-        case "4":
-        case "ovo":
-          return await this.handleEWalletPayment(
-            customerId,
-            orderId,
-            totalIDR,
-            "OVO"
-          );
-&nbsp;
-        case "5":
-        case "shopeepay":
-          return await this.handleEWalletPayment(
-            customerId,
-            orderId,
-            totalIDR,
-            "SHOPEEPAY"
-          );
-&nbsp;
-        case "6":
-        case "bank":
-        case "transfer":
-          return this.handleBankSelection(customerId, orderId, totalIDR);
-&nbsp;
-        default:
-          return {
-            message: "❌ Pilihan tidak valid. Ketik nomor 1-6.",
-            qrisData: null,
-          };
-      }
-    } catch (error) {
-      console.error("❌ Payment creation error:", error);
-      return {
-        message: PaymentMessages.paymentError(error.message),
-        qrisData: null,
-      };
+  static sanitizeProductId(productId) {
+    if (!productId || typeof productId !== 'string') {
+      return '';
     }
+&nbsp;
+    // Allow only alphanumeric, hyphens, underscores
+    return productId.replace(/[^a-zA-Z0-9\-_]/g, '').toLowerCase();
   }
 &nbsp;
   /**
-   * Handle QRIS payment
+   * Sanitize phone number - digits only
+   * @param {string} phone - Phone number
+   * @returns {string} Sanitized phone number
    */
-  async handleQRISPayment(customerId, orderId, totalIDR) {
-    const qrisResult = await this.xenditService.createQrisPayment(
-      totalIDR,
-      orderId,
-      { phone: customerId }
-    );
-&nbsp;
-    this.sessionManager.setPaymentMethod(
-      customerId,
-      "QRIS",
-      qrisResult.invoiceId
-    );
-    this.sessionManager.setStep(customerId, "awaiting_payment");
-&nbsp;
-    // Log payment initiation
-    if (this.logger) {
-      this.logger.logPaymentInit(
-        customerId,
-        orderId,
-        "QRIS",
-        totalIDR,
-        qrisResult.invoiceId
-      );
+  static sanitizePhoneNumber(phone) {
+    if (!phone || typeof phone !== 'string') {
+      return '';
     }
 &nbsp;
-    return {
-      message: PaymentMessages.qrisPayment(orderId, totalIDR),
-      qrisData: { qrCodePath: qrisResult.qrCodePath },
-    };
+    // Keep only digits
+    return phone.replace(/\D/g, '');
   }
 &nbsp;
   /**
-   * Handle E-Wallet payment (DANA, GoPay, OVO, ShopeePay) - Manual Transfer
+   * Sanitize email address
+   * @param {string} email - Email address
+   * @returns {string} Sanitized email
    */
-  async handleEWalletPayment(customerId, orderId, totalIDR, walletType) {
-    const { systemSettings } = require("../config");
-    const paymentAccounts = systemSettings.paymentAccounts;
-&nbsp;
-    const walletKey = walletType.toLowerCase();
-    const account = paymentAccounts[walletKey];
-&nbsp;
-    if (!account || !account.enabled) {
-      return {
-        message: `❌ Metode pembayaran ${walletType} sedang tidak tersedia.\n\nSilakan pilih metode lain.`,
-        qrisData: null,
-      };
+  static sanitizeEmail(email) {
+    if (!email || typeof email !== 'string') {
+      return '';
     }
 &nbsp;
-    // Update session with payment metadata (Best Practice: Complete state tracking)
-    const session = await this.sessionManager.getSession(customerId);
-    session.paymentMethod = walletKey;
-    session.paymentAccount = account.number;
-    session.paymentStatus = "awaiting_proof"; // Track payment status
-    session.paymentInitiatedAt = Date.now(); // Timestamp for timeout handling
-    session.paymentMetadata = {
-      type: "manual_ewallet",
-      provider: walletKey,
-      accountNumber: account.number,
-      accountName: account.name,
-      amount: totalIDR,
-      orderId: orderId,
-      initiatedAt: new Date().toISOString(),
-    };
-    await this.sessionManager.setStep(customerId, "awaiting_admin_approval");
+    // Basic email sanitization
+    const sanitized = email.trim().toLowerCase();
 &nbsp;
-    // Log transaction with complete context (Best Practice: Audit trail)
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (this.logger) {
-      this.logger.logTransaction(
-        customerId,
-        "payment_manual_initiated",
-        orderId,
-        {
-          method: walletKey,
-          amount: totalIDR,
-          accountNumber: account.number,
-          accountName: account.name,
-          paymentType: "manual_ewallet",
-          timestamp: new Date().toISOString(),
-        }
-      );
-    }
-&nbsp;
-    return {
-      message: PaymentMessages.manualEWalletInstructions(
-        walletType,
-        account.number,
-        account.name,
-        totalIDR,
-        orderId
-      ),
-      qrisData: null,
-    };
+    // Check basic email format
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    return emailRegex.test(sanitized) ? sanitized : '';
   }
 &nbsp;
   /**
-   * Show bank selection menu
+   * Sanitize order ID - alphanumeric and hyphens only
+   * @param {string} orderId - Order ID
+   * @returns {string} Sanitized order ID
    */
-  handleBankSelection(customerId, orderId, totalIDR) {
-    this.sessionManager.setStep(customerId, "select_bank");
-    return {
-      message: PaymentMessages.bankSelection(orderId, totalIDR),
-      qrisData: null,
-    };
+  static sanitizeOrderId(orderId) {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!orderId || typeof orderId !== 'string') {
+<span class="cstat-no" title="statement not covered" >      return '';</span>
+    }
+&nbsp;
+    // Allow alphanumeric, hyphens, underscores, dots
+    return orderId.replace(/[^a-zA-Z0-9\-_.@]/g, '');
   }
 &nbsp;
   /**
-   * Handle bank selection for Manual Bank Transfer
+   * Sanitize amount/price - numbers and decimals only
+   * @param {string|number} amount - Amount
+   * @returns {number} Sanitized amount
    */
-  async handleBankChoice(customerId, choice) {
-    const session = await this.sessionManager.getSession(customerId);
-    const cart = session.cart;
-    const totalUSD = cart.reduce((sum, item) =&gt; sum + item.price, 0);
-    const totalIDR = this.xenditService.convertToIDR(totalUSD);
-    const orderId = session.orderId;
-&nbsp;
-    const bankMap = {
-      1: "BCA",
-      2: "BNI",
-      3: "BRI",
-      4: "MANDIRI",
-      bca: "BCA",
-      bni: "BNI",
-      bri: "BRI",
-      mandiri: "MANDIRI",
-    };
-&nbsp;
-    const bankCode = bankMap[choice.toLowerCase()];
-&nbsp;
-    if (!bankCode) {
-      return {
-        message: PaymentMessages.invalidBankChoice(),
-        qrisData: null,
-      };
+  static sanitizeAmount(amount) {
+    if (amount === null || amount === undefined) {
+      return 0;
     }
 &nbsp;
-    const { systemSettings } = require("../config");
-    const paymentAccounts = systemSettings.paymentAccounts;
-    const bankKey = bankCode.toLowerCase();
-    const account = paymentAccounts[bankKey];
+    if (typeof amount === 'number') {
+      return Math.max(0, Math.floor(amount));
+    }
 &nbsp;
-    if (!account || !account.enabled) {
-      return {
-        message: `❌ Bank ${bankCode} sedang tidak tersedia.\n\nSilakan pilih bank lain.`,
-        qrisData: null,
-      };
+    // Convert string to number, remove non-numeric (keep digits only)
+    const numericString = String(amount).replace(/\D/g, '');
+    const parsed = parseInt(numericString, 10);
+&nbsp;
+    return isNaN(parsed) ? 0 : Math.max(0, parsed);
+  }
+&nbsp;
+  /**
+   * Sanitize command - prevent command injection
+   * @param {string} command - Command string
+   * @returns {string} Sanitized command
+   */
+  static sanitizeCommand(command) {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!command || typeof command !== 'string') {
+<span class="cstat-no" title="statement not covered" >      return '';</span>
+    }
+&nbsp;
+    // Allow only alphanumeric and basic punctuation
+    return command.replace(/[^a-zA-Z0-9\s\-_]/g, '').trim().toLowerCase();
+  }
+&nbsp;
+  /**
+   * Sanitize promo code - alphanumeric only
+   * @param {string} promoCode - Promo code
+   * @returns {string} Sanitized promo code
+   */
+  static sanitizePromoCode(promoCode) {
+    if (!promoCode || typeof promoCode !== 'string') {
+      return '';
+    }
+&nbsp;
+    // Convert to uppercase first, then keep only alphanumeric
+    return promoCode.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  }
+&nbsp;
+  /**
+   * Validate and sanitize integer
+   * @param {*} value - Value to sanitize
+   * @param {number} min - Minimum value
+   * @param {number} max - Maximum value
+   * @returns {number} Sanitized integer
+   */
+  static sanitizeInteger(value, min = 0, max = Number.MAX_SAFE_INTEGER) {
+    const parsed = parseInt(value, 10);
+    
+    if (isNaN(parsed)) {
+      return min;
+    }
+&nbsp;
+    return Math.max(min, Math.min(max, parsed));
+  }
+&nbsp;
+  /**
+   * Remove null bytes (prevent null byte injection)
+   * @param {string} input - Input string
+   * @returns {string} Cleaned string
+   */
+  static removeNullBytes(input) {
+    if (!input || typeof input !== 'string') {
+      return '';
+    }
+&nbsp;
+    return input.replace(/\0/g, '');
+  }
+&nbsp;
+  /**
+   * Sanitize filename - prevent path traversal
+   * @param {string} filename - Filename
+   * @returns {string} Safe filename
+   */
+  static sanitizeFilename(filename) {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!filename || typeof filename !== 'string') {
+<span class="cstat-no" title="statement not covered" >      return '';</span>
+    }
+&nbsp;
+    // Remove path separators and dangerous characters
+    let safe = filename.replace(/[\/\\:*?"&lt;&gt;|]/g, '');
+    
+    // Remove leading dots (hidden files)
+    safe = safe.replace(/^\.+/, '');
+&nbsp;
+    // Remove path traversal attempts
+    safe = safe.replace(/\.\./g, '');
+&nbsp;
+    return safe.trim();
+  }
+&nbsp;
+  /**
+   * Validate WhatsApp customer ID format
+   * @param {string} customerId - Customer ID (phone@c.us)
+   * @returns {boolean} Valid or not
+   */
+  static isValidCustomerId(customerId) {
+    if (!customerId || typeof customerId !== 'string') {
+      return false;
+    }
+&nbsp;
+    // Check format: digits@c.us, digits@s.whatsapp.net, or admin@c.us (for tests)
+    const regex = /^([\w\d]+)@(c\.us|s\.whatsapp\.net)$/;
+    return regex.test(customerId);
+  }
+&nbsp;
+  /**
+   * Sanitize JSON input - prevent injection via JSON
+   * @param {string} jsonString - JSON string
+   * @returns {object|null} Parsed object or null
+   */
+  static sanitizeJSON(jsonString) {
+    if (!jsonString || typeof jsonString !== 'string') {
+      return null;
     }
 &nbsp;
     try {
-      // Update session with payment metadata (Best Practice: Complete state tracking)
-      session.paymentMethod = `bank_${bankKey}`;
-      session.paymentAccount = account.accountNumber;
-      session.paymentStatus = "awaiting_proof"; // Track payment status
-      session.paymentInitiatedAt = Date.now(); // Timestamp for timeout handling
-      session.paymentMetadata = {
-        type: "manual_bank_transfer",
-        provider: bankKey,
-        accountNumber: account.accountNumber,
-        accountName: account.accountName,
-        bankCode: bankCode,
-        amount: totalIDR,
-        orderId: orderId,
-        initiatedAt: new Date().toISOString(),
-      };
-      await this.sessionManager.setStep(customerId, "awaiting_admin_approval");
-&nbsp;
-      // Log transaction with complete context (Best Practice: Audit trail)
-      <span class="missing-if-branch" title="else path not taken" >E</span>if (this.logger) {
-        this.logger.logTransaction(
-          customerId,
-          "payment_manual_initiated",
-          orderId,
-          {
-            method: `bank_${bankKey}`,
-            amount: totalIDR,
-            accountNumber: account.accountNumber,
-            accountName: account.accountName,
-            bankCode: bankCode,
-            paymentType: "manual_bank_transfer",
-            timestamp: new Date().toISOString(),
-          }
-        );
+      const parsed = JSON.parse(jsonString);
+      
+      // Prevent prototype pollution
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (parsed &amp;&amp; typeof parsed === 'object') {
+        delete parsed.__proto__;
+        delete parsed.constructor;
+        delete parsed.prototype;
       }
 &nbsp;
-      return {
-        message: PaymentMessages.manualBankTransferInstructions(
-          bankCode,
-          account.accountNumber,
-          account.accountName,
-          totalIDR,
-          orderId
-        ),
-        qrisData: null,
-      };
+      return parsed;
     } catch (error) {
-<span class="cstat-no" title="statement not covered" >      console.error(`❌ VA creation error (${bankCode}):`, error);</span>
-&nbsp;
-      // Log payment failure
-<span class="cstat-no" title="statement not covered" >      if (this.logger) {</span>
-<span class="cstat-no" title="statement not covered" >        this.logger.logPaymentFailure(</span>
-          customerId,
-          orderId,
-          `VA_${bankCode}`,
-          error.message
-        );
-      }
-&nbsp;
-<span class="cstat-no" title="statement not covered" >      return {</span>
-        message: `❌ Gagal membuat Virtual Account ${bankCode}.\n\nError: ${error.message}\n\nSilakan coba lagi atau pilih bank lain.`,
-        qrisData: null,
-      };
+      return null;
     }
   }
 &nbsp;
   /**
-   * Check payment status
+   * Comprehensive input validation
+   * @param {string} input - Input to validate
+   * @param {object} options - Validation options
+   * @returns {object} {valid: boolean, sanitized: string, errors: string[]}
    */
-<span class="fstat-no" title="function not covered" >  as</span>ync checkPaymentStatus(customerId) {
-    const paymentData = <span class="cstat-no" title="statement not covered" >await this.sessionManager.getPaymentMethod(customerId);</span>
+  static validate(input, options = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
+    const {
+      maxLength = 500,
+      minLength = 0,
+      allowSpecialChars = false,
+      type = 'text' // text, email, phone, productId, orderId, etc.
+    } = options;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (!paymentData.invoiceId) {</span>
-<span class="cstat-no" title="statement not covered" >      return PaymentMessages.noActiveInvoice();</span>
+    const errors = [];
+    let sanitized = input;
+&nbsp;
+    // Check type
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof input !== 'string') {
+<span class="cstat-no" title="statement not covered" >      errors.push('Input must be a string');</span>
+<span class="cstat-no" title="statement not covered" >      return { valid: false, sanitized: '', errors };</span>
     }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    try {</span>
-      const paymentStatus = <span class="cstat-no" title="statement not covered" >await this.xenditService.checkPaymentStatus(</span>
-        paymentData.invoiceId
-      );
+    // Length validation
+    if (input.length &lt; minLength) {
+      errors.push(`Input too short (min: ${minLength})`);
+    }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >      if (paymentStatus.status === "SUCCEEDED") {</span>
-        // Log payment success
-        const orderId = <span class="cstat-no" title="statement not covered" >await this.sessionManager.getOrderId(customerId);</span>
-<span class="cstat-no" title="statement not covered" >        if (this.logger) {</span>
-<span class="cstat-no" title="statement not covered" >          this.logger.logPaymentSuccess(</span>
-            customerId,
-            orderId,
-            paymentData.method,
-            paymentStatus.amount,
-            paymentData.invoiceId
-          );
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (input.length &gt; maxLength) {
+<span class="cstat-no" title="statement not covered" >      errors.push(`Input too long (max: ${maxLength})`);</span>
+<span class="cstat-no" title="statement not covered" >      sanitized = input.substring(0, maxLength);</span>
+    }
+&nbsp;
+    // Type-specific sanitization
+    switch (type) {
+      case 'email':
+        sanitized = this.sanitizeEmail(input);
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!sanitized) <span class="cstat-no" title="statement not covered" >errors.push('Invalid email format');</span>
+        break;
+      
+      case 'phone':
+        sanitized = this.sanitizePhoneNumber(input);
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!sanitized) <span class="cstat-no" title="statement not covered" >errors.push('Invalid phone number');</span>
+        break;
+      
+<span class="branch-2 cbranch-no" title="branch not covered" >      case 'productId':</span>
+<span class="cstat-no" title="statement not covered" >        sanitized = this.sanitizeProductId(input);</span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      
+<span class="branch-3 cbranch-no" title="branch not covered" >      case 'orderId':</span>
+<span class="cstat-no" title="statement not covered" >        sanitized = this.sanitizeOrderId(input);</span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      
+<span class="branch-4 cbranch-no" title="branch not covered" >      case 'promoCode':</span>
+<span class="cstat-no" title="statement not covered" >        sanitized = this.sanitizePromoCode(input);</span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      
+<span class="branch-5 cbranch-no" title="branch not covered" >      case 'command':</span>
+<span class="cstat-no" title="statement not covered" >        sanitized = this.sanitizeCommand(input);</span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      
+      default:
+        sanitized = this.sanitizeText(input, maxLength);
+    }
+&nbsp;
+    // Check for dangerous patterns
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!allowSpecialChars) {
+      const dangerousPatterns = [
+        /&lt;script/i,
+        /javascript:/i,
+        /on\w+=/i, // event handlers
+        /eval\(/i,
+        /expression\(/i,
+      ];
+&nbsp;
+      for (const pattern of dangerousPatterns) {
+        if (pattern.test(input)) {
+          errors.push('Potentially dangerous content detected');
+          break;
         }
-<span class="cstat-no" title="statement not covered" >        return await this.handlePaymentSuccess(customerId, paymentData);</span>
-      } else <span class="cstat-no" title="statement not covered" >if (paymentStatus.status === "EXPIRED") {</span>
-<span class="cstat-no" title="statement not covered" >        this.sessionManager.setStep(customerId, "menu");</span>
-<span class="cstat-no" title="statement not covered" >        return PaymentMessages.paymentExpired();</span>
-      } else <span class="cstat-no" title="statement not covered" >if (paymentStatus.status === "FAILED") {</span>
-<span class="cstat-no" title="statement not covered" >        this.sessionManager.setStep(customerId, "menu");</span>
-<span class="cstat-no" title="statement not covered" >        return PaymentMessages.paymentFailed();</span>
       }
-&nbsp;
-<span class="cstat-no" title="statement not covered" >      return PaymentMessages.paymentPending();</span>
-    } catch (error) {
-<span class="cstat-no" title="statement not covered" >      console.error("❌ Payment check error:", error);</span>
-<span class="cstat-no" title="statement not covered" >      return PaymentMessages.checkStatusError();</span>
     }
+&nbsp;
+    return {
+      valid: errors.length === 0,
+      sanitized,
+      errors
+    };
   }
 &nbsp;
   /**
-   * Handle successful payment
+   * Escape HTML entities
+   * @param {string} text - Text to escape
+   * @returns {string} Escaped text
    */
-<span class="fstat-no" title="function not covered" >  as</span>ync handlePaymentSuccess(customerId, paymentData) {
-    const orderId = <span class="cstat-no" title="statement not covered" >await this.sessionManager.getOrderId(customerId);</span>
-    const cart = <span class="cstat-no" title="statement not covered" >await this.sessionManager.getCart(customerId);</span>
-&nbsp;
-    // Deliver products automatically
-    const ProductDelivery = <span class="cstat-no" title="statement not covered" >require("../services/productDelivery");</span>
-    const productDelivery = <span class="cstat-no" title="statement not covered" >new ProductDelivery();</span>
-    const deliveryResult = <span class="cstat-no" title="statement not covered" >productDelivery.deliverProducts(</span>
-      customerId,
-      orderId,
-      cart
-    );
-&nbsp;
-    // Clear cart and reset session
-<span class="cstat-no" title="statement not covered" >    this.sessionManager.clearCart(customerId);</span>
-<span class="cstat-no" title="statement not covered" >    this.sessionManager.setStep(customerId, "menu");</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >    if (!deliveryResult.success) {</span>
-<span class="cstat-no" title="statement not covered" >      return `✅ *PEMBAYARAN BERHASIL!*\n\n📋 Order ID: ${orderId}\n💳 Metode: ${paymentData.method}\n\n❌ Namun produk tidak tersedia di database.\nSilakan hubungi admin.`;</span>
+  static escapeHtml(text) {
+    if (!text || typeof text !== 'string') {
+      return '';
     }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return {</span>
-      message: PaymentMessages.paymentSuccess(
-        orderId,
-        paymentData.method,
-        deliveryResult.message
-      ),
-      deliverToCustomer: true,
-      products: cart,
+    const htmlEntities = {
+      '&amp;': '&amp;amp;',
+      '&lt;': '&amp;lt;',
+      '&gt;': '&amp;gt;',
+      '"': '&amp;quot;',
+      "'": '&amp;#x27;',
+      '/': '&amp;#x2F;'
     };
+&nbsp;
+    return text.replace(/[&amp;&lt;&gt;"'/]/g, char =&gt; htmlEntities[char]);
+  }
+&nbsp;
+  /**
+   * Rate limiting check (simple in-memory)
+   * @param {string} key - Unique key (e.g., customerId)
+   * @param {number} maxAttempts - Max attempts allowed
+   * @param {number} windowMs - Time window in milliseconds
+   * @param {boolean} force - Force enable even in test mode (for testing rate limits)
+   * @returns {boolean} Allowed or not
+   */
+  static checkRateLimit(key, maxAttempts = <span class="branch-0 cbranch-no" title="branch not covered" >10,</span> windowMs = <span class="branch-0 cbranch-no" title="branch not covered" >60000,</span> force = false) {
+    // Skip rate limiting in test environment unless forced
+    if (!force &amp;&amp; (process.env.NODE_ENV === 'test' || <span class="branch-2 cbranch-no" title="branch not covered" >process.env.JEST_WORKER_ID)</span>) {
+      return true;
+    }
+&nbsp;
+    if (!this.rateLimitStore) {
+      this.rateLimitStore = new Map();
+    }
+&nbsp;
+    const now = Date.now();
+    const record = this.rateLimitStore.get(key) || { count: 0, resetTime: now + windowMs };
+&nbsp;
+    // Reset if window expired
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (now &gt; record.resetTime) {
+<span class="cstat-no" title="statement not covered" >      record.count = 0;</span>
+<span class="cstat-no" title="statement not covered" >      record.resetTime = now + windowMs;</span>
+    }
+&nbsp;
+    record.count++;
+    this.rateLimitStore.set(key, record);
+&nbsp;
+    return record.count &lt;= maxAttempts;
   }
 }
 &nbsp;
-module.exports = PaymentHandlers;
+module.exports = InputSanitizer;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -1215,14 +1257,14 @@ module.exports = PaymentHandlers;
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
                 at 2025-11-05T14:20:40.015Z
             </div>
-        <script src="../../prettify.js"></script>
+        <script src="../../../prettify.js"></script>
         <script>
             window.onload = function () {
                 prettyPrint();
             };
         </script>
-        <script src="../../sorter.js"></script>
-        <script src="../../block-navigation.js"></script>
+        <script src="../../../sorter.js"></script>
+        <script src="../../../block-navigation.js"></script>
     </body>
 </html>
     

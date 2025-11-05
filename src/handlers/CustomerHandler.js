@@ -12,6 +12,7 @@ const {
 const UIMessages = require("../../lib/uiMessages");
 const FuzzySearch = require("../utils/FuzzySearch");
 const { SessionSteps } = require("../utils/Constants");
+const InputSanitizer = require("../utils/InputSanitizer");
 const AIHandler = require("./AIHandler");
 const OrderService = require("../services/order/OrderService");
 const WishlistService = require("../services/wishlist/WishlistService");
@@ -52,6 +53,32 @@ class CustomerHandler extends BaseHandler {
     console.log(
       `[CustomerHandler] handle() called - Step: ${step}, Message: "${message}"`
     );
+
+    // Sanitize input
+    if (!InputSanitizer.isValidCustomerId(customerId)) {
+      console.warn(`[CustomerHandler] Invalid customer ID: ${customerId}`);
+      return "❌ Invalid customer ID format";
+    }
+
+    // Sanitize message - basic cleaning only, preserve case
+    const originalMessage = message;
+    message = InputSanitizer.removeNullBytes(String(message || ''));
+    message = message.trim();
+    
+    if (!message) {
+      console.warn(`[CustomerHandler] Empty message after sanitization`);
+      return "⚠️ Pesan tidak valid. Silakan coba lagi.";
+    }
+
+    // Rate limiting
+    if (!InputSanitizer.checkRateLimit(customerId, 30, 60000)) { // Increased to 30/min
+      console.warn(`[CustomerHandler] Rate limit exceeded for ${customerId}`);
+      return "⚠️ Terlalu banyak pesan. Mohon tunggu sebentar.";
+    }
+
+    if (originalMessage !== message) {
+      console.log(`[CustomerHandler] Sanitized: "${message}" (was: "${originalMessage}")`);
+    }
 
     try {
       // Global commands accessible from any step

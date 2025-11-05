@@ -5,6 +5,7 @@
 
 const BaseHandler = require("./BaseHandler");
 const InputValidator = require("../../lib/inputValidator");
+const InputSanitizer = require("../utils/InputSanitizer");
 const UIMessages = require("../../lib/uiMessages");
 const AIHandler = require("./AIHandler");
 const AdminStatsService = require("../services/admin/AdminStatsService");
@@ -121,6 +122,12 @@ class AdminHandler extends BaseHandler {
    * Main handler - routes admin commands with O(1) map lookup
    */
   async handle(adminId, message) {
+    // Sanitize admin ID
+    if (!InputSanitizer.isValidCustomerId(adminId)) {
+      this.logger.logSecurity(adminId, "invalid_admin_id", "format_error");
+      return "❌ Invalid admin ID format";
+    }
+
     // Check admin authorization
     if (!InputValidator.isAdmin(adminId)) {
       this.logger.logSecurity(
@@ -134,6 +141,21 @@ class AdminHandler extends BaseHandler {
     // Null/undefined check (from PR #1 bug fix)
     if (!message || typeof message !== "string") {
       return this.showAdminHelp();
+    }
+
+    // Sanitize message - basic cleaning, preserve case for admin commands
+    const originalMessage = message;
+    message = InputSanitizer.removeNullBytes(message);
+    message = message.trim();
+    
+    // Empty string after sanitization - show help
+    if (!message) {
+      console.log(`[AdminHandler] Empty message after sanitization - showing help`);
+      return this.showAdminHelp();
+    }
+
+    if (originalMessage !== message) {
+      this.log(adminId, "admin_command", `Sanitized: "${message}" (was: "${originalMessage}")`);
     }
 
     try {
