@@ -174,7 +174,7 @@ class ValidationHelpers {
   // New helper from PR #1
   static parseCommand(message) {
     const parts = message.trim().split(/\s+/);
-    return { command: parts[0], args: parts.slice(1] };
+    return { command: parts[0], args: parts.slice(1) };
   }
   
   // ... 20+ validation helpers
