@@ -8,7 +8,6 @@ const path = require("path");
 const {
   products: productsCatalog,
   DEFAULT_STOCK,
-  VCC_STOCK,
 } = require("../../config/products.config");
 
 class ProductService {
@@ -32,11 +31,13 @@ class ProductService {
   getAllProducts() {
     const premiumAccounts = productsCatalog.premiumAccounts.map((p) => ({
       ...p,
+      category: "Premium Accounts",
       categoryLabel: "Premium Accounts",
     }));
 
     const virtualCards = productsCatalog.virtualCards.map((p) => ({
       ...p,
+      category: "Virtual Cards",
       categoryLabel: "Virtual Cards",
     }));
 
@@ -49,7 +50,18 @@ class ProductService {
    * @returns {Object|null} Product or null
    */
   getProductById(productId) {
-    return this.products[productId] || null;
+    const product = this.products[productId];
+    if (!product) return null;
+
+    // Determine category based on product type
+    const isPremiumAccount = productsCatalog.premiumAccounts.some(p => p.id === productId);
+    const category = isPremiumAccount ? "Premium Accounts" : "Virtual Cards";
+
+    return {
+      ...product,
+      category,
+      categoryLabel: category
+    };
   }
 
   /**

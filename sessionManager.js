@@ -178,7 +178,8 @@ class SessionManager {
    */
   async getCart(customerId) {
     const session = await this.getSession(customerId);
-    return session.cart;
+    // Ensure cart is always an array
+    return Array.isArray(session.cart) ? session.cart : [];
   }
 
   /**

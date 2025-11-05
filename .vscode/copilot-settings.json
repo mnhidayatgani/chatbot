@@ -1,0 +1,127 @@
+{
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "text": "ALWAYS read .github/copilot-instructions.md before making changes"
+    },
+    {
+      "text": "ALWAYS check docs/ folder for architecture patterns before implementing features"
+    },
+    {
+      "text": "File size limit: MAX 700 lines per .js file in src/ (GitHub Actions requirement)"
+    },
+    {
+      "text": "MUST run 'npm run lint && npm test' before suggesting git push"
+    },
+    {
+      "text": "Use modular architecture: Core → Router → Handler → Service pattern"
+    },
+    {
+      "text": "All handlers extend BaseHandler and use dependency injection"
+    },
+    {
+      "text": "Session state machine: menu → browsing → checkout (track with setStep)"
+    },
+    {
+      "text": "Always use SessionService for session operations, never direct access"
+    },
+    {
+      "text": "Product search uses FuzzySearch utility for typo tolerance"
+    },
+    {
+      "text": "Payment flow: checkout → select method → generate QRIS → webhook → deliver"
+    },
+    {
+      "text": "Admin commands start with / and check isAdmin() first"
+    },
+    {
+      "text": "Rate limiting: 20 messages/minute per customer (spam protection)"
+    },
+    {
+      "text": "Use UIMessages for all customer-facing text (lib/uiMessages.js)"
+    },
+    {
+      "text": "Log transactions with TransactionLogger (lib/transactionLogger.js)"
+    },
+    {
+      "text": "Redis is primary storage with in-memory fallback (RedisStorage/MemoryStorage)"
+    },
+    {
+      "text": "VPS-optimized: single-process Puppeteer, no GPU, 2GB RAM target"
+    },
+    {
+      "text": "Test coverage minimum: 70% branches/functions/lines/statements"
+    },
+    {
+      "text": "ESLint must pass: 0 errors required before commit"
+    },
+    {
+      "text": "Never hardcode secrets (GOOGLE_API_KEY, XENDIT_SECRET_KEY, etc.)"
+    },
+    {
+      "text": "AI features optional: Check AI_ENABLE before using Gemini"
+    }
+  ],
+  "github.copilot.chat.reviewSelection.instructions": [
+    {
+      "text": "Check file is under 700 lines (if in src/)"
+    },
+    {
+      "text": "Verify no hardcoded secrets or API keys"
+    },
+    {
+      "text": "Ensure proper error handling with try-catch"
+    },
+    {
+      "text": "Check session state updates use SessionService"
+    },
+    {
+      "text": "Verify rate limiting applied for customer actions"
+    },
+    {
+      "text": "Confirm transaction logging for payments/orders"
+    },
+    {
+      "text": "Check admin commands have authorization check"
+    },
+    {
+      "text": "Verify tests exist for new features"
+    }
+  ],
+  "github.copilot.chat.testGeneration.instructions": [
+    {
+      "text": "Use Jest framework (see tests/setup.js)"
+    },
+    {
+      "text": "Mock external services (Redis, WhatsApp, Xendit)"
+    },
+    {
+      "text": "Test file naming: *.test.js in tests/unit/ or tests/integration/"
+    },
+    {
+      "text": "Coverage target: 80% minimum for all metrics"
+    },
+    {
+      "text": "Test session isolation (multiple customers don't interfere)"
+    },
+    {
+      "text": "Test state transitions (menu → browsing → checkout)"
+    },
+    {
+      "text": "Test error cases (invalid input, stock out, payment failure)"
+    }
+  ],
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Use conventional commits: feat/fix/docs/test/refactor/chore"
+    },
+    {
+      "text": "Reference file changed: 'feat(CustomerHandler): add wishlist command'"
+    },
+    {
+      "text": "Include scope when relevant: (admin), (payment), (session), (ai)"
+    },
+    {
+      "text": "Keep under 72 characters"
+    }
+  ]
+}

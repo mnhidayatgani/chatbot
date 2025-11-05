@@ -160,3 +160,67 @@ docs/
 - **New features:** Add to core docs with date
 - **Bug fixes:** Create dated report in archive if significant (>5 bugs)
 - **Sprints:** Archive after completion with summary in DEV_ROADMAP.md
+
+## Testing Documentation
+
+### 📝 [Testing Guide](./TESTING_GUIDE.md)
+**Purpose:** Complete guide for running, writing, and maintaining tests  
+**Last Updated:** November 5, 2025
+
+**Contents:**
+- Setup and installation
+- Running tests (all commands)
+- Test structure and organization
+- Writing new tests
+- Best practices from nodejs-testing-best-practices
+- Troubleshooting common issues
+- CI/CD integration
+- Future enhancements roadmap
+
+**Key Highlights:**
+- ✅ 73/73 tests passing (100%)
+- ⚡ 3-second average runtime
+- 📦 6 test suites
+- 🎯 122% of Week 1 target
+
+**Quick Start:**
+```bash
+npm test              # Run all tests
+npm run test:coverage # Generate coverage report
+npm test -- --watch   # Watch mode
+```
+
+---
+
+### 📊 [Test Specifications](./TEST_SPECIFICATIONS.md)
+**Purpose:** Detailed specifications for all 73 unit tests  
+**Last Updated:** November 5, 2025
+
+**Contents:**
+- Executive summary with quick stats
+- Complete test breakdown by module:
+  - SessionManager (11 tests)
+  - CustomerHandler (12 tests)
+  - OrderService (12 tests)
+  - WishlistService (14 tests)
+  - PromoService (21 tests)
+  - ProductService (3 tests)
+- Individual test specifications with:
+  - Test ID
+  - Purpose
+  - Inputs/Outputs
+  - Assertions
+  - Coverage details
+- Performance benchmarks
+- Quality metrics
+- Change log
+
+**Use Cases:**
+- Understanding what each test validates
+- Debugging test failures
+- Writing new tests (reference existing patterns)
+- Code review reference
+- Onboarding new developers
+
+---
+

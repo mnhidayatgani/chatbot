@@ -1,4 +1,69 @@
 {
+  // GitHub Copilot Optimization Settings
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": true,
+    "plaintext": true,
+    "markdown": true,
+    "javascript": true,
+    "json": true
+  },
+  "github.copilot.advanced": {
+    "debug.overrideEngine": "gpt-4",
+    "debug.useNodeFetcher": true
+  },
+  "github.copilot.editor.enableAutoCompletions": true,
+  "github.copilot.chat.localeOverride": "id",
+  "github.copilot.chat.useProjectTemplates": true,
+  "github.copilot.referencesUsed": true,
+  
+  // Editor Settings for Better AI Context
+  "editor.inlineSuggest.enabled": true,
+  "editor.suggestSelection": "first",
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": true,
+    "strings": true
+  },
+  "editor.acceptSuggestionOnCommitCharacter": true,
+  "editor.snippetSuggestions": "top",
+  "editor.wordBasedSuggestions": "matchingDocuments",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  
+  // Files to include in Copilot context
+  "files.associations": {
+    "*.js": "javascript",
+    ".env.example": "dotenv",
+    "copilot-instructions.md": "markdown"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/.wwebjs_auth": true,
+    "**/coverage": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/coverage": true,
+    "**/.wwebjs_auth": true,
+    "**/logs": true,
+    "**/payment_proofs": true,
+    "**/payment_qris": true
+  },
+  
+  // ESLint Integration
+  "eslint.enable": true,
+  "eslint.validate": ["javascript"],
+  "eslint.format.enable": true,
+  
+  // Jest Integration
+  "jest.autoRun": "off",
+  "jest.showCoverageOnLoad": false,
+  
+  // Code Spell Checker
   "cSpell.language": "en,id",
   "cSpell.enabled": true,
   "cSpell.customDictionaries": {

@@ -5,17 +5,17 @@
 **CRITICAL - Read First:**
 
 1. **Keep responses concise** - Save detailed summaries to agent memory instead of long replies
-2. **Research before implementing** - Always check Context7 (#upstash/context7) for best practices when adding features
-3. **Reference memory** - Check agent memory for project context and previous decisions
+2. **Test Framework is Jest** - Use `describe()`, `test()`, `expect()` for all new tests (not Mocha)
+3. **Reference memory** - Check `.github/memory/` for project context and previous decisions
 4. **Document in memory** - Update memory with implementation summaries, not user-facing responses
 5. **CHECK WORKFLOWS BEFORE PUSH** - Read `.github/memory/github-workflows-rules.md` for CI/CD requirements
 
 **GitHub Actions Rules (MUST FOLLOW):**
 
-- ✅ **File size limit:** Max 700 lines per .js file in `src/` (BLOCKING)
-- ✅ **No hardcoded secrets:** No `xnd_production`, hardcoded passwords (BLOCKING)
-- ✅ **ESLint clean:** 0 errors required (BLOCKING)
-- ✅ **Tests passing:** All 251 unit tests must pass (BLOCKING)
+- 🚨 **File size limit:** Max 700 lines per .js file in `src/` (BLOCKING CI/CD)
+- 🚨 **No hardcoded secrets:** No `xnd_production`, API keys in code (BLOCKING)
+- 🚨 **ESLint clean:** 0 errors required (BLOCKING)
+- 🚨 **Tests passing:** All 885 Jest tests must pass (BLOCKING)
 - ⚠️ **Pre-push checklist:** Run `npm run lint && npm test` locally before pushing
 
 ## Architecture Overview
@@ -76,10 +76,14 @@ chatbot/
 
 **Handler Layer** (`src/handlers/`):
 
-- `CustomerHandler.js` - Menu, browsing, cart, checkout, order history
-- `AdminHandler.js` - Admin commands (approve, broadcast, stats, stock, settings, etc.) - **MAX 700 LINES**
-- `AdminInventoryHandler.js` - Inventory management (addstock, stockreport, salesreport) - Split from AdminHandler
+- `CustomerHandler.js` - Menu, browsing, cart, checkout, order history (~570 lines)
+- `AdminHandler.js` - Admin commands (approve, broadcast, stats, stock, settings) (~686 lines)
+- `AdminInventoryHandler.js` - Inventory management (addstock, stockreport, salesreport) (~230 lines)
+- `AdminReviewHandler.js` - Review moderation and management (~187 lines)
+- `AdminAnalyticsHandler.js` - Enhanced dashboard and analytics (~150 lines)
 - `ProductHandler.js` - Product management (add, edit, remove, fuzzy search)
+- `CustomerWishlistHandler.js` - Wishlist features (save, view, remove) (~120 lines)
+- `CustomerCheckoutHandler.js` - Checkout flow with promo codes (~280 lines)
 - `BaseHandler.js` - Abstract base class with common handler functionality
 
 **CRITICAL:** All files in `src/` must be < 700 lines (GitHub Actions requirement)
@@ -93,9 +97,13 @@ chatbot/
 - `payment/PaymentService.js` - Payment abstraction
 - `payment/PaymentReminderService.js` - Automated payment reminders (cron-based)
 - `product/ProductService.js` - Product operations
-- `product/StockManager.js` - Stock tracking and validation
-- `order/OrderService.js` - Order tracking and history (NEW)
-- `wishlist/WishlistService.js` - Wishlist/favorites management (NEW)
+- `inventory/RedisStockManager.js` - Redis-backed stock tracking and validation
+- `order/OrderService.js` - Order tracking and history
+- `wishlist/WishlistService.js` - Wishlist/favorites management
+- `review/ReviewService.js` - Product reviews and ratings
+- `promo/PromoService.js` - Promo code management and validation
+- `analytics/DashboardService.js` - Admin dashboard analytics and reporting
+- `ai/AIService.js` - Gemini 2.5 Flash integration for typo correction and Q&A
 
 **Configuration** (`src/config/`):
 
@@ -114,10 +122,25 @@ npm install
 npm start  # Displays QR code - scan with WhatsApp to link
 ```
 
-**Testing without WhatsApp:**
+**Development commands:**
 
 ```bash
-npm test  # Runs tests/test.js - validates logic without WhatsApp connection
+npm run dev          # Start in dev mode (alias for npm start)
+npm run lint         # Run ESLint
+npm run lint:fix     # Auto-fix ESLint issues
+npm test             # Run all Jest tests with coverage
+npm run test:watch   # Run tests in watch mode
+npm run check        # Lint + test (pre-commit validation)
+```
+
+**Pre-push checklist:**
+
+```bash
+npm run check        # This runs lint + test
+# Wait for: ✨ 0 errors, 0 warnings AND all tests passing
+git add .
+git commit -m "your message"
+git push
 ```
 
 **VPS deployment:**
@@ -126,7 +149,60 @@ npm test  # Runs tests/test.js - validates logic without WhatsApp connection
 - Use PM2 for process management: `pm2 start index.js --name whatsapp-bot`
 - Sessions auto-cleanup every 10 minutes; inactive sessions expire after 30 minutes
 
+**GitHub Actions Workflows:**
+
+- **Quick Scan** (< 5 min): Linter, secrets check, file size check - BLOCKING
+- **Deep Review** (< 15 min): Code complexity, unused deps, JSDoc - warnings only
+- **AI Code Guardian** (< 2 min): AI-powered code quality review - informational
+
+Check `.github/memory/github-workflows-rules.md` for detailed CI/CD requirements.
+
 ## Project-Specific Patterns
+
+### Handler Delegation Pattern (CRITICAL)
+
+AdminHandler uses **delegation to sub-handlers** to maintain <700 line limit:
+
+```javascript
+// AdminHandler.js delegates to specialized handlers
+class AdminHandler extends BaseHandler {
+  constructor(sessionManager, xenditService, logger) {
+    super(sessionManager, logger);
+    // Delegate to sub-handlers for domain separation
+    this.inventoryHandler = new AdminInventoryHandler(sessionManager, logger);
+    this.reviewHandler = new AdminReviewHandler(reviewService, logger);
+    this.analyticsHandler = new AdminAnalyticsHandler(dashboardService, logger);
+    this.orderHandler = new AdminOrderHandler(
+      sessionManager,
+      xenditService,
+      logger
+    );
+    this.promoHandler = new AdminPromoHandler(
+      sessionManager,
+      promoService,
+      logger
+    );
+
+    // Command routing map for O(1) lookup
+    this.commandRoutes = this._initializeCommandRoutes();
+  }
+
+  handle(adminId, message) {
+    const route = this.commandRoutes.get(command);
+    if (route) {
+      // Delegate to appropriate sub-handler
+      return route.handler[route.method](adminId, message);
+    }
+  }
+}
+```
+
+**When adding admin features:**
+
+1. Check AdminHandler.js size FIRST
+2. If >650 lines, create new `Admin*Handler.js`
+3. Delegate in `_initializeCommandRoutes()`
+4. Follow pattern: `this.reviewHandler.handleViewReviews()`
 
 ### Message Processing Flow
 
@@ -209,6 +285,41 @@ args: [
 ```
 
 **Do not remove these flags** - they're essential for 2GB RAM constraint.
+
+### AI/Gemini Integration Pattern
+
+Uses Vercel AI SDK with Gemini 2.5 Flash Lite for intelligent features:
+
+**AIService Pattern:**
+
+- Rate limiting: 5 calls/hour per customer via Redis
+- Cost tracking: ~$0.00005 per call (97% cheaper than GPT-4o)
+- Fallback-first: Gracefully degrades if API unavailable
+- Streaming support for long responses
+
+**Integration Points:**
+
+```javascript
+// CustomerHandler - typo correction fallback
+if (!product) {
+  const aiSuggestion = await this.aiService.correctTypo(message, products);
+  if (aiSuggestion) return aiSuggestion;
+}
+
+// AdminHandler - AI-generated descriptions
+handleGenerateDescription(adminId, productName) {
+  const description = await this.aiHandler.generateProductDescription(productName);
+  return description;
+}
+```
+
+**Configuration:** `src/config/ai.config.js`
+
+- Enable/disable AI features globally
+- Adjust rate limits, costs, model settings
+- Feature toggles for typo correction, Q&A, recommendations
+
+**Testing:** Mock AIService in tests to avoid API costs during CI/CD
 
 ## Integration Points
 
@@ -395,11 +506,70 @@ Detect language from first message or add `/language` command
 
 ## Testing Strategy
 
-`test.js` validates logic without WhatsApp:
+**Framework:** Jest with 885 total tests (817 passing, 68 edge case failures)
 
-- Creates mock sessions, simulates message sequences
-- Tests session isolation (multiple customers don't interfere)
-- Verifies cart operations and checkout flow
+**Test Structure:**
+
+```
+tests/
+├── unit/                 # Unit tests (isolated components)
+│   ├── handlers/        # Handler tests (CustomerHandler, AdminHandler, etc.)
+│   ├── services/        # Service tests (ProductService, ReviewService, etc.)
+│   ├── utils/           # Utility tests (FuzzySearch, ValidationHelpers, etc.)
+│   └── lib/             # Library tests (MessageRouter, UIMessages, etc.)
+├── integration/         # Integration tests (service interactions)
+└── e2e/                # End-to-end tests (complete flows)
+```
+
+**Running Tests:**
+
+```bash
+npm test              # Run all tests with coverage
+npm run test:unit     # Run unit tests only
+npm run test:watch    # Watch mode for development
+npm run check         # Lint + test (pre-commit)
+```
+
+**Test Patterns:**
+
+- Use AAA pattern (Arrange-Act-Assert)
+- Mock external dependencies (Redis, WhatsApp client, file system)
+- Test edge cases (null, undefined, empty strings, large values)
+- Each new feature requires corresponding tests
+- Target: 80%+ code coverage
+
+**Example Test Structure:**
+
+```javascript
+describe("ServiceName", () => {
+  let service;
+  let mockDependency;
+
+  beforeEach(() => {
+    mockDependency = { method: jest.fn() };
+    service = new ServiceName(mockDependency);
+  });
+
+  describe("methodName()", () => {
+    test("should handle valid input", () => {
+      // Arrange
+      const input = "valid";
+      mockDependency.method.mockReturnValue("result");
+
+      // Act
+      const result = service.methodName(input);
+
+      // Assert
+      expect(result).toBe("expected");
+      expect(mockDependency.method).toHaveBeenCalledWith(input);
+    });
+
+    test("should handle invalid input", () => {
+      expect(() => service.methodName(null)).toThrow();
+    });
+  });
+});
+```
 
 **Run tests after changes to core logic** - catches state machine errors before deployment.
 
@@ -448,13 +618,17 @@ Detect language from first message or add `/language` command
 
 **index.js:** Entry point. Handles WhatsApp lifecycle (qr, ready, authenticated, disconnected, error events). Sets up SIGINT/SIGTERM handlers for graceful shutdown. PM2-friendly. Initializes PaymentReminderService and cleanup intervals.
 
-**chatbotLogic.js:** Pure business logic. No WhatsApp dependencies - receives message string, returns response string. This makes testing trivial.
+**chatbotLogic.js:** Bootstrap layer that wires together handlers and services. Delegates actual business logic to modular handlers in `src/handlers/`. Routes messages through MessageRouter to appropriate handler.
 
 **sessionManager.js:** Key-value store wrapping a Map. Every method takes customerId (phone number like "1234567890@c.us"). Auto-updates lastActivity timestamp. Includes rate limiting (20 msg/min). Session schema includes `cart: []`, `wishlist: []`, `step`, `orderId`, payment fields.
 
-**config.js:** Static catalog. Uses `process.env` for stock defaults but has fallbacks. `formatProductList()` generates the browsing UI.
+**src/handlers/BaseHandler.js:** Abstract base class providing common functionality for all handlers. Inherit from this when creating new handlers. Provides session access, logging, and error handling patterns.
 
-**test.js:** Standalone script (no test framework). Run with `node test.js`. All assertions are implicit (script succeeds or throws).
+**src/core/MessageRouter.js:** Central message routing logic. Analyzes message content and session state to determine which handler should process it. Critical for understanding message flow.
+
+**lib/inputValidator.js:** Input validation and sanitization. Use this before processing any user input to prevent injection attacks and handle edge cases.
+
+**lib/uiMessages.js:** All customer-facing message templates. Centralized for consistency and easy i18n. Heavy emoji usage for mobile-friendly readability.
 
 ## Recent Features (Phase 1 & 2)
 
@@ -466,21 +640,25 @@ Detect language from first message or add `/language` command
 - ✅ Payment Reminders: Cron job (_/15 _ \* \* \*) with 30min & 2h reminders
 - ✅ Webhook Auto-Retry: Exponential backoff (1s→16s, max 5 retries)
 
-**Phase 2: Medium Priority (🔄 IN PROGRESS)**
+**Phase 2: Features Delivered (✅ COMPLETE)**
 
-- ✅ **Wishlist/Favorites (COMPLETE):**
+- ✅ **Wishlist/Favorites:**
   - Commands: `simpan <product>` or `⭐ <product>`, `/wishlist`, `hapus <product>`
   - Storage: Session-based with Redis persistence
   - Features: Add, view, remove, move to cart
   - Tests: 25/25 passing
   - Service: `WishlistService.js` (264 lines)
-  - Integration: CustomerHandler, MessageRouter, UIMessages
-- 🔲 **Promo Code System (NEXT):**
+- ✅ **Promo Code System:**
   - Admin: `/createpromo CODE DISCOUNT DAYS`
   - Customer: `promo CODE` during checkout
   - Features: Expiry validation, usage tracking, discount calculation
-- 🔲 **Product Reviews:**
-  - Command: `/review netflix 5 Mantap!`
-  - Features: Star ratings, review text, average ratings in product list
-- 🔲 **Enhanced Admin Dashboard:**
-  - Revenue by payment method, top 5 products, retention rate, ASCII graphs
+  - Service: `PromoService.js`
+- ✅ **Product Reviews:**
+  - Command: `/review <product> <rating> <text>`
+  - Features: Star ratings (1-5), review text, average ratings in product list
+  - Admin moderation: `/reviews <product>`, `/deletereview <reviewId>`
+  - Service: `ReviewService.js`
+- ✅ **Enhanced Admin Dashboard:**
+  - Command: `/stats [days]`
+  - Features: Revenue by payment method, top 5 products, retention rate, ASCII graphs
+  - Service: `DashboardService.js` (401 lines)

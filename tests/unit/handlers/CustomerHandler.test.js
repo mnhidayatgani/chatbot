@@ -179,7 +179,6 @@ describe("CustomerHandler", () => {
     test("When cart has items, Then should show cart summary", async () => {
       // Arrange
       const customerId = "628123456789@c.us";
-      const session = await sessionManager.getSession(customerId);
       const product = { id: "netflix", name: "Netflix Premium", price: 50000 };
       await sessionManager.addToCart(customerId, product);
 
@@ -237,9 +236,10 @@ describe("CustomerHandler", () => {
     test("When session is inactive, Then should auto-cleanup", async () => {
       // Arrange
       const customerId = "628123456789@c.us";
-      const session = await sessionManager.getSession(customerId);
+      await sessionManager.getSession(customerId);
 
-      // Act: Set lastActivity to 1 hour ago
+      // Act: Set lastActivity to 1 hour ago - access via sessions map
+      const session = sessionManager.sessions.get(customerId);
       session.lastActivity = Date.now() - 60 * 60 * 1000;
 
       // Trigger cleanup
@@ -248,6 +248,198 @@ describe("CustomerHandler", () => {
       // Assert: Session should be removed
       const sessionAfter = sessionManager.sessions.get(customerId);
       expect(sessionAfter).toBeUndefined();
+    });
+  });
+
+  describe("Global Commands", () => {
+    test("should handle 'menu' command from any step", async () => {
+      const customerId = "628123456789@c.us";
+      sessionManager.setStep(customerId, "browsing");
+
+      const result = await handler.handle(customerId, "menu", "browsing");
+
+      expect(result).toContain("Selamat datang");
+      expect(result).toBeDefined();
+    });
+
+    test("should handle 'help' command", async () => {
+      const customerId = "628123456789@c.us";
+
+      const result = await handler.handle(customerId, "help", "menu");
+
+      expect(result).toBeDefined();
+      expect(result.length).toBeGreaterThan(0);
+    });
+
+    test("should handle 'cart' command from any step", async () => {
+      const customerId = "628123456789@c.us";
+
+      const result = await handler.handle(customerId, "cart", "menu");
+
+      expect(result).toBeDefined();
+    });
+
+    test("should handle 'history' command", async () => {
+      const customerId = "628123456789@c.us";
+
+      const result = await handler.handle(customerId, "history", "menu");
+
+      expect(result).toBeDefined();
+    });
+
+    test("should handle 'wishlist' command", async () => {
+      const customerId = "628123456789@c.us";
+
+      const result = await handler.handle(customerId, "wishlist", "menu");
+
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe("Order History", () => {
+    test("should show order history when available", async () => {
+      const customerId = "628123456789@c.us";
+
+      const result = await handler.handleOrderHistory(customerId);
+
+      expect(result).toBeDefined();
+    });
+
+    test("should handle empty order history", async () => {
+      const customerId = "628123456789_new@c.us";
+
+      const result = await handler.handleOrderHistory(customerId);
+
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe("Track Order", () => {
+    test("should handle track command without order ID", async () => {
+      const customerId = "628123456789@c.us";
+
+      const result = await handler.handleTrackOrder(customerId, "track");
+
+      expect(result).toBeDefined();
+    });
+
+    test("should handle track command with order ID", async () => {
+      const customerId = "628123456789@c.us";
+
+      const result = await handler.handleTrackOrder(customerId, "/track ORD-123");
+
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe("Review System", () => {
+    test("should handle review command", async () => {
+      const customerId = "628123456789@c.us";
+
+      const result = await handler.handleAddReview(customerId, "review netflix 5 Great!");
+
+      expect(result).toBeDefined();
+    });
+
+    test("should handle malformed review command", async () => {
+      const customerId = "628123456789@c.us";
+
+      const result = await handler.handleAddReview(customerId, "review");
+
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe("Error Handling", () => {
+    test("should handle invalid customer ID", async () => {
+      const result = await handler.showCart(null);
+
+      expect(result).toBeDefined();
+    });
+
+    test("should handle corrupted session data", async () => {
+      const customerId = "test@c.us";
+      // Set corrupted session without cart array
+      sessionManager.sessions.set(customerId, { 
+        step: 'menu',
+        cart: null, // Corrupted: cart should be an array
+        lastActivity: Date.now() 
+      });
+
+      const result = await handler.showCart(customerId);
+
+      expect(result).toBeDefined();
+      // Should handle gracefully - either return error or empty cart message
+    });
+
+    test("should handle errors in handleMenuSelection", async () => {
+      const customerId = "test@c.us";
+
+      const result = await handler.handleMenuSelection(customerId, "invalid");
+
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe("Edge Cases", () => {
+    test("should handle very long product names", async () => {
+      const customerId = "test@c.us";
+      const longName = "a".repeat(1000);
+      sessionManager.setStep(customerId, "browsing");
+
+      const result = await handler.handleProductSelection(customerId, longName);
+
+      expect(result).toBeDefined();
+    });
+
+    test("should handle special characters in input", async () => {
+      const customerId = "test@c.us";
+      sessionManager.setStep(customerId, "browsing");
+
+      const result = await handler.handleProductSelection(customerId, "@#$%^&*");
+
+      expect(result).toBeDefined();
+    });
+
+    test("should handle empty strings", async () => {
+      const customerId = "test@c.us";
+
+      const result = await handler.handle(customerId, "", "menu");
+
+      expect(result).toBeDefined();
+    });
+
+    test("should handle whitespace-only input", async () => {
+      const customerId = "test@c.us";
+
+      const result = await handler.handle(customerId, "   ", "menu");
+
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe("Performance", () => {
+    test("should handle rapid requests", async () => {
+      const customerId = "test@c.us";
+
+      const promises = [];
+      for (let i = 0; i < 10; i++) {
+        promises.push(handler.showCart(customerId));
+      }
+
+      const results = await Promise.all(promises);
+
+      expect(results.every(r => r !== undefined)).toBe(true);
+    });
+
+    test("should handle multiple concurrent customers", async () => {
+      const customerIds = Array(5).fill(0).map((_, i) => `customer${i}@c.us`);
+
+      const promises = customerIds.map(id => handler.showCart(id));
+
+      const results = await Promise.all(promises);
+
+      expect(results.length).toBe(5);
     });
   });
 });

@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "reviewId": "REV-1762336045990-1q6duiyar",
+    "productId": "netflix",
+    "customerId": "628123456789@c.us",
+    "rating": 5,
+    "reviewText": "Great!",
+    "orderId": null,
+    "createdAt": 1762336045990,
+    "updatedAt": 1762336045990,
+    "isActive": true
+  }
+]

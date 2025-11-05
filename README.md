@@ -92,6 +92,16 @@ See [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) for detailed structure.
    npm start
    ```
 
+   ### One-line Quick Start
+
+   If you want a single command that installs dependencies (if needed) and starts the bot, run:
+
+   ```bash
+   npm run quickstart
+   ```
+
+   This is a convenience script that runs `npm install` then `npm start`.
+
 4. **Scan QR Code**
 
    - A QR code will appear in your terminal

@@ -103,6 +103,16 @@ class CustomerHandler extends BaseHandler {
           return await this.handleMenuSelection(customerId, message);
 
         case SessionSteps.BROWSING:
+          // Check for wishlist commands first
+          if (message.startsWith('simpan ') || message.startsWith('⭐ ')) {
+            const productName = message.replace(/^(simpan|⭐)\s+/, '').trim();
+            return await this.wishlistHandler.handleAddToWishlist(customerId, productName);
+          }
+          if (message.startsWith('hapus ')) {
+            const productName = message.replace(/^hapus\s+/, '').trim();
+            return await this.wishlistHandler.handleRemoveFromWishlist(customerId, productName);
+          }
+          
           console.log(`[CustomerHandler] -> handleProductSelection()`);
           return await this.handleProductSelection(customerId, message);
 

@@ -1,1 +1,61 @@
-[]
+[
+  {
+    "code": "TEST10",
+    "discountPercent": 10,
+    "expiryDate": "2025-11-12T06:15:28.899Z",
+    "maxUses": 10,
+    "usedCount": 0
+  },
+  {
+    "code": "EXPIRED20",
+    "discountPercent": 20,
+    "expiryDate": "2020-01-01T00:00:00.000Z",
+    "maxUses": 10,
+    "usedCount": 0
+  },
+  {
+    "code": "SAVE20",
+    "discountPercent": 20,
+    "expiryDate": 1764937011463,
+    "maxUses": 0,
+    "currentUses": 0,
+    "createdAt": 1762345011463,
+    "isActive": true
+  },
+  {
+    "code": "DISC15",
+    "discountPercent": 15,
+    "expiryDate": 1764937011495,
+    "maxUses": 0,
+    "currentUses": 0,
+    "createdAt": 1762345011495,
+    "isActive": true
+  },
+  {
+    "code": "REMOVE",
+    "discountPercent": 10,
+    "expiryDate": 1764937011544,
+    "maxUses": 0,
+    "currentUses": 0,
+    "createdAt": 1762345011544,
+    "isActive": true
+  },
+  {
+    "code": "FIRST10",
+    "discountPercent": 10,
+    "expiryDate": 1764937011631,
+    "maxUses": 0,
+    "currentUses": 0,
+    "createdAt": 1762345011631,
+    "isActive": true
+  },
+  {
+    "code": "SECOND20",
+    "discountPercent": 20,
+    "expiryDate": 1764937011631,
+    "maxUses": 0,
+    "currentUses": 0,
+    "createdAt": 1762345011631,
+    "isActive": true
+  }
+]

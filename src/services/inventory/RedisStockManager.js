@@ -106,10 +106,16 @@ class RedisStockManager {
    */
   async setStock(productId, quantity, reason = "manual_update") {
     try {
+      // Validate quantity
+      if (typeof quantity !== 'number' || quantity < 0 || !Number.isFinite(quantity)) {
+        console.error(`❌ Invalid quantity for ${productId}: ${quantity}`);
+        return false;
+      }
+
       const key = `${this.STOCK_PREFIX}${productId}`;
       const oldStock = await this.getStock(productId);
 
-      await this.redisClient.set(key, Math.max(0, quantity).toString());
+      await this.redisClient.set(key, quantity.toString());
 
       // Log stock history
       await this.logStockHistory(productId, oldStock, quantity, reason);

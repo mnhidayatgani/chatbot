@@ -12,6 +12,10 @@ class FuzzySearch {
    * @returns {Object|null} Best matching product or null
    */
   static search(products, query, threshold = 3) {
+    // Validate inputs
+    if (!query || query.trim() === '') return null;
+    if (!Array.isArray(products) || products.length === 0) return null;
+
     const queryLower = query.toLowerCase();
 
     // First try exact match
