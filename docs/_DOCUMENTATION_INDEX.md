@@ -24,6 +24,8 @@ High-level overview and navigation guide for COMPREHENSIVE_DOCUMENTATION.md
 
 - **README.md** (root) - Quick start guide and feature overview (570 lines)
 - **QUICKSTART.md** (root) - Fast 5-minute setup guide
+- **FAQ.md** - ❓ Frequently Asked Questions (Q&A) - NEW! 🆕
+- **CARA_INPUT_AKUN.md** - 📦 Cara input akun dari WhatsApp (Indonesian)
 - **DEPLOYMENT.md** - VPS deployment guide with troubleshooting (713 lines)
 - **XENDIT_SETUP.md** - Payment gateway quick start (138 lines)
 
