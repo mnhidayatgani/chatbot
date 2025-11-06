@@ -14,9 +14,11 @@ const AdminPromoHandler = require("./AdminPromoHandler");
 const PromoService = require("../services/promo/PromoService");
 const ReviewService = require("../services/review/ReviewService");
 const DashboardService = require("../services/analytics/DashboardService");
+const PaymentAnalyticsService = require("../services/analytics/PaymentAnalyticsService");
 const AdminReviewHandler = require("./AdminReviewHandler");
 const AdminAnalyticsHandler = require("./AdminAnalyticsHandler");
 const AdminOrderHandler = require("./AdminOrderHandler");
+const AdminProductHandler = require("./AdminProductHandler");
 
 class AdminHandler extends BaseHandler {
   constructor(sessionManager, xenditService, logger = null) {
@@ -33,8 +35,9 @@ class AdminHandler extends BaseHandler {
     );
     this.reviewService = new ReviewService();
     this.dashboardService = new DashboardService(logger);
+    this.paymentAnalytics = new PaymentAnalyticsService(sessionManager);
 
-    // Initialize specialized handlers
+    this.productHandler = new AdminProductHandler(sessionManager, logger);
     this.reviewHandler = new AdminReviewHandler(this.reviewService, logger);
     this.analyticsHandler = new AdminAnalyticsHandler(
       this.dashboardService,
@@ -48,7 +51,6 @@ class AdminHandler extends BaseHandler {
       logger
     );
 
-    // Command routing map for O(1) lookup (from PR #1 optimization)
     this.commandRoutes = this._initializeCommandRoutes();
   }
 
@@ -59,16 +61,13 @@ class AdminHandler extends BaseHandler {
    */
   _initializeCommandRoutes() {
     return {
-      // Help
       "/help": () => this.showAdminHelp(),
 
-      // Order & Communication
       "/approve": (adminId, msg) =>
         this.orderHandler.handleApprove(adminId, msg),
       "/broadcast": (adminId, msg) =>
         this.orderHandler.handleBroadcast(adminId, msg),
 
-      // Analytics & Stats
       "/stats": async (adminId, msg) => {
         const parts = msg.split(/\s+/);
         const days = parts.length > 1 ? parseInt(parts[1]) || 30 : 30;
@@ -76,17 +75,17 @@ class AdminHandler extends BaseHandler {
       },
       "/status": (adminId) => this.handleStatus(adminId),
 
-      // Product Management
       "/stock": (adminId, msg) => this.handleStock(adminId, msg),
       "/addproduct": (adminId, msg) => this.handleAddProduct(adminId, msg),
+      "/newproduct": (adminId, msg) => this.productHandler.handleNewProduct(adminId, msg),
+      "/editproduct": (adminId, msg) => this.handleEditProduct(adminId, msg),
       "/editproduct": (adminId, msg) => this.handleEditProduct(adminId, msg),
       "/removeproduct": (adminId, msg) =>
         this.handleRemoveProduct(adminId, msg),
       "/generate-desc": (adminId, msg) =>
-        this.handleGenerateDescription(adminId, msg),
-      "/refreshproducts": (adminId) => this.handleRefreshProducts(adminId),
+        this.aiHandler.generateProductDescriptionForAdmin(adminId, msg),
+      "/refreshproducts": (adminId) => this.productHandler.handleRefreshProducts(adminId),
 
-      // Inventory
       "/addstock-bulk": (adminId, msg) =>
         this.inventoryHandler.handleAddStockBulk(adminId, msg),
       "/addstock": (adminId, msg) =>
@@ -97,7 +96,6 @@ class AdminHandler extends BaseHandler {
       "/salesreport": (adminId, msg) =>
         this.inventoryHandler.handleSalesReport(adminId, msg),
 
-      // Promo
       "/createpromo": (adminId, msg) =>
         this.promoHandler.handleCreatePromo(adminId, msg),
       "/listpromos": (adminId) => this.promoHandler.handleListPromos(adminId),
@@ -106,7 +104,6 @@ class AdminHandler extends BaseHandler {
       "/promostats": (adminId, msg) =>
         this.promoHandler.handlePromoStats(adminId, msg),
 
-      // Reviews
       "/reviews": (adminId, msg) =>
         this.reviewHandler.handleViewReviews(adminId, msg),
       "/reviewstats": (adminId) =>
@@ -114,7 +111,12 @@ class AdminHandler extends BaseHandler {
       "/deletereview": (adminId, msg) =>
         this.reviewHandler.handleDeleteReview(adminId, msg),
 
-      // Settings
+      "/paymentstats": (adminId, msg) => {
+        const parts = msg.split(/\s+/);
+        const days = parts.length > 1 ? parseInt(parts[1]) || 30 : 30;
+        return this.paymentAnalytics.formatPaymentStats(days);
+      },
+
       "/settings": (adminId, msg) => this.handleSettings(adminId, msg),
     };
   }
@@ -123,13 +125,11 @@ class AdminHandler extends BaseHandler {
    * Main handler - routes admin commands with O(1) map lookup
    */
   async handle(adminId, message) {
-    // Sanitize admin ID
     if (!InputSanitizer.isValidCustomerId(adminId)) {
       this.logger.logSecurity(adminId, "invalid_admin_id", "format_error");
       return "❌ Invalid admin ID format";
     }
 
-    // Check admin authorization
     if (!InputValidator.isAdmin(adminId)) {
       this.logger.logSecurity(
         adminId,
@@ -139,17 +139,14 @@ class AdminHandler extends BaseHandler {
       return UIMessages.unauthorized();
     }
 
-    // Null/undefined check (from PR #1 bug fix)
     if (!message || typeof message !== "string") {
       return this.showAdminHelp();
     }
 
-    // Sanitize message - basic cleaning, preserve case for admin commands
     const originalMessage = message;
     message = InputSanitizer.removeNullBytes(message);
     message = message.trim();
     
-    // Empty string after sanitization - show help
     if (!message) {
       console.log(`[AdminHandler] Empty message after sanitization - showing help`);
       return this.showAdminHelp();
@@ -160,28 +157,23 @@ class AdminHandler extends BaseHandler {
     }
 
     try {
-      // Check if admin is in bulk add mode (special state)
       const step = await this.sessionManager.getStep(adminId);
       if (step === "admin_bulk_add") {
         return await this.inventoryHandler.processBulkAdd(adminId, message);
       }
 
-      // Parse command once to avoid redundant operations
       const command = message.split(/\s+/)[0];
 
-      // Try exact match first (O(1) lookup)
       if (this.commandRoutes[command]) {
         return await this.commandRoutes[command](adminId, message);
       }
 
-      // Try prefix match for commands with parameters
       for (const [route, handler] of Object.entries(this.commandRoutes)) {
         if (message.startsWith(route + " ") || message === route) {
           return await handler(adminId, message);
         }
       }
 
-      // Unknown admin command
       return this.showAdminHelp();
     } catch (error) {
       this.logError(adminId, error, { command: message });
@@ -210,7 +202,6 @@ class AdminHandler extends BaseHandler {
         : "⚠️ Fallback";
       const webhookStatus = "✅ Active";
 
-      // Memory usage
       const memUsage = process.memoryUsage();
       const memUsedMB = (memUsage.heapUsed / 1024 / 1024).toFixed(2);
       const memTotalMB = (memUsage.heapTotal / 1024 / 1024).toFixed(2);
@@ -219,12 +210,10 @@ class AdminHandler extends BaseHandler {
         100
       ).toFixed(1);
 
-      // Uptime
       const uptimeSeconds = process.uptime();
       const uptimeHours = Math.floor(uptimeSeconds / 3600);
       const uptimeMinutes = Math.floor((uptimeSeconds % 3600) / 60);
 
-      // Log stats
       const logStats = logRotationManager.getStats();
 
       let response = `🔍 *System Status*\n\n`;
@@ -254,12 +243,10 @@ class AdminHandler extends BaseHandler {
   handleStock(adminId, message) {
     const parts = message.split(/\s+/);
 
-    // Show all stock
     if (parts.length === 1) {
       return this.showAllStock();
     }
 
-    // Update stock
     if (parts.length === 3) {
       const [, productId, quantity] = parts;
       const { setStock } = require("../../config");
@@ -284,7 +271,6 @@ class AdminHandler extends BaseHandler {
       }
     }
 
-    // Invalid format
     return (
       `❌ *Format Salah*\n\n` +
       `Gunakan: /stock <productId> <jumlah>\n\n` +
@@ -330,7 +316,127 @@ class AdminHandler extends BaseHandler {
   }
 
   /**
-   * /addproduct - Add new product to catalog
+   * /newproduct - Quick product template generator (NEW!)
+   * Creates product file and metadata template
+   * Usage: /newproduct <id> <name> <price> [description]
+   */
+  handleNewProduct(adminId, message) {
+    const fs = require('fs');
+    const path = require('path');
+    const productsConfig = require('../../src/config/products.config');
+    
+    const commandText = message.substring('/newproduct '.length).trim();
+    
+    if (!commandText) {
+      return (
+        `🆕 *Quick Product Generator*\n\n` +
+        `Buat produk baru dengan cepat!\n\n` +
+        `*Format:*\n` +
+        `/newproduct <id> <nama> <harga> [deskripsi]\n\n` +
+        `*Contoh:*\n` +
+        `/newproduct canva "Canva Pro" 25000 "Design tools unlimited"\n\n` +
+        `*Tips:*\n` +
+        `• ID: huruf kecil, tanpa spasi (contoh: canva-pro)\n` +
+        `• Nama: gunakan " " jika ada spasi\n` +
+        `• Harga: dalam Rupiah\n` +
+        `• Deskripsi: opsional, gunakan " " jika ada spasi\n\n` +
+        `Setelah dibuat, gunakan /addstock <id> untuk menambah stock!`
+      );
+    }
+    
+    const regex = /(?:[^\s"]+|"[^"]*")+/g;
+    const parts = commandText.match(regex).map(p => p.replace(/^"(.*)"$/, '$1'));
+    
+    if (parts.length < 3) {
+      return `❌ *Format Salah*\n\nMinimal: /newproduct <id> <nama> <harga>`;
+    }
+    
+    const [id, name, price, ...descParts] = parts;
+    const description = descParts.join(' ') || `${name} - Premium account`;
+    
+    if (!/^[a-z0-9-]+$/.test(id)) {
+      return `❌ *ID Invalid*\n\nID harus huruf kecil, angka, atau dash (-)\nContoh: netflix, canva-pro, vcc-basic`;
+    }
+    
+    const priceNum = parseInt(price);
+    if (isNaN(priceNum) || priceNum <= 0) {
+      return `❌ *Harga Invalid*\n\nHarga harus angka positif (dalam Rupiah)`;
+    }
+    
+    try {
+      const productFile = path.join(process.cwd(), 'products_data', `${id}.txt`);
+      
+      if (fs.existsSync(productFile)) {
+        return `❌ *Produk Sudah Ada*\n\nFile ${id}.txt sudah ada.\nGunakan /editproduct atau /addstock untuk mengelola.`;
+      }
+      
+      fs.writeFileSync(productFile, '# Product credentials\n# Add credentials using: /addstock ' + id + ' <email:password>\n');
+      
+      const metadataFile = path.join(process.cwd(), 'products_data', 'products.json');
+      let metadata = {};
+      
+      if (fs.existsSync(metadataFile)) {
+        try {
+          metadata = JSON.parse(fs.readFileSync(metadataFile, 'utf-8'));
+        } catch (error) {
+          console.warn('Invalid products.json, starting fresh:', error.message);
+          metadata = {};
+        }
+      }
+      
+      const lowerName = name.toLowerCase();
+      let category = 'premium'; // default
+      
+      if (lowerName.includes('vcc') || lowerName.includes('virtual card')) {
+        category = 'vcc';
+      } else if (lowerName.includes('game') || lowerName.includes('steam')) {
+        category = 'game';
+      } else if (lowerName.includes('vpn')) {
+        category = 'vpn';
+      }
+      
+      metadata[id] = {
+        name: name,
+        price: priceNum,
+        description: description,
+        category: category
+      };
+      
+      fs.writeFileSync(metadataFile, JSON.stringify(metadata, null, 2));
+      
+      productsConfig.refreshProducts();
+      
+      this.log(adminId, 'new_product_created', { 
+        productId: id, 
+        name, 
+        price: priceNum, 
+        category 
+      });
+      
+      return (
+        `✅ *Produk Berhasil Dibuat!*\n\n` +
+        `📦 Product ID: ${id}\n` +
+        `🏷️ Nama: ${name}\n` +
+        `💰 Harga: Rp${priceNum.toLocaleString('id-ID')}\n` +
+        `📝 Deskripsi: ${description}\n` +
+        `📂 Kategori: ${category}\n` +
+        `📁 File: products_data/${id}.txt\n\n` +
+        `✨ *Products auto-refreshed!*\n\n` +
+        `⏭️ *Langkah Selanjutnya:*\n` +
+        `1️⃣ Tambah stock: /addstock ${id} <credentials>\n` +
+        `2️⃣ Atau bulk add: /addstock-bulk ${id}\n` +
+        `3️⃣ Cek stock: /stock ${id}\n\n` +
+        `💡 Produk sudah muncul di catalog customer!`
+      );
+      
+    } catch (error) {
+      this.log(adminId, 'new_product_error', { error: error.message });
+      return `❌ *Error Membuat Produk*\n\n${error.message}\n\nCoba lagi atau hubungi developer.`;
+    }
+  }
+
+  /**
+   * /addproduct - Add a new product to the catalog (manual)
    */
   handleAddProduct(adminId, message) {
     const commandText = message.substring("/addproduct ".length).trim();
@@ -448,17 +554,29 @@ class AdminHandler extends BaseHandler {
   handleSettings(adminId, message) {
     const parts = message.split(/\s+/);
 
-    // View all settings
     if (parts.length === 1) {
-      return this.showAllSettings();
+      let msg = "⚙️ *CURRENT SETTINGS*\n\n";
+      msg += `Currency: ${process.env.CURRENCY || 'USD'}\n`;
+      msg += `Shop Name: ${process.env.SHOP_NAME || 'Premium Shop'}\n`;
+      msg += `Session Timeout: ${process.env.SESSION_TIMEOUT || 30} minutes\n`;
+      msg += `Low Stock Threshold: ${process.env.LOW_STOCK_THRESHOLD || 5}\n\n`;
+      msg += `Use /settings help for commands`;
+      return msg;
     }
 
-    // Show help
     if (parts.length === 2 && parts[1] === "help") {
-      return this.showSettingsHelp();
+      let msg = "⚙️ *SETTINGS COMMANDS*\n\n";
+      msg += `/settings - View all settings\n`;
+      msg += `/settings help - Show this help\n`;
+      msg += `/settings <key> <value> - Update setting\n\n`;
+      msg += `*Available Keys:*\n`;
+      msg += `• shopName - Nama toko\n`;
+      msg += `• sessionTimeout - Session timeout (minutes)\n`;
+      msg += `• lowStockThreshold - Batas stok rendah\n\n`;
+      msg += `⚠️ *Note:* Settings temporary. Edit .env for permanent.`;
+      return msg;
     }
 
-    // Update setting
     if (parts.length === 3) {
       const [, key, value] = parts;
       const { updateSetting } = require("../../config");
@@ -492,180 +610,6 @@ class AdminHandler extends BaseHandler {
     );
   }
 
-  /**
-   * Show all system settings
-   */
-  showAllSettings() {
-    const { getAllSettings } = require("../../config");
-    const settings = getAllSettings();
-
-    let message = "⚙️ *SYSTEM SETTINGS*\n\n";
-    message += "💱 *Currency:*\n";
-    message += `• usdToIdrRate: ${settings.usdToIdrRate}\n\n`;
-    message += "⏱️ *Session:*\n";
-    message += `• sessionTimeout: ${settings.sessionTimeout} min\n`;
-    message += `• maxMessagesPerMinute: ${settings.maxMessagesPerMinute}\n\n`;
-    message += "🏪 *Business:*\n";
-    message += `• shopName: ${settings.shopName}\n\n`;
-    message += "📦 *Delivery:*\n";
-    message += `• autoDeliveryEnabled: ${settings.autoDeliveryEnabled}\n`;
-    message += `• lowStockThreshold: ${settings.lowStockThreshold}\n\n`;
-    message += "🔧 *System:*\n";
-    message += `• maintenanceMode: ${settings.maintenanceMode}\n\n`;
-    message += "💡 Ketik /settings help untuk panduan lengkap";
-
-    return message;
-  }
-
-  /**
-   * Show settings help guide
-   */
-  showSettingsHelp() {
-    let message = "📖 *SETTINGS GUIDE*\n\n";
-    message += "🔑 *Available Settings:*\n\n";
-    message += "• usdToIdrRate - Kurs USD ke IDR\n";
-    message += "• sessionTimeout - Timeout session (menit)\n";
-    message += "• maxMessagesPerMinute - Max pesan/menit\n";
-    message += "• shopName - Nama toko\n";
-    message += "• autoDeliveryEnabled - Auto delivery (true/false)\n";
-    message += "• lowStockThreshold - Batas stok rendah\n";
-    message += "• maintenanceMode - Mode maintenance (true/false)\n\n";
-    message +=
-      "⚠️ *Note:* Settings bersifat temporary.\nUntuk permanent, edit file .env";
-
-    return message;
-  }
-
-  /**
-   * /generate-desc <productId> - Generate AI product description
-   */
-  async handleGenerateDescription(adminId, message) {
-    const parts = message.split(" ");
-    if (parts.length < 2) {
-      return (
-        `📝 *GENERATE PRODUCT DESCRIPTION*\n\n` +
-        `Format: /generate-desc <productId>\n\n` +
-        `Contoh: /generate-desc netflix\n\n` +
-        `AI akan membuat deskripsi produk yang menarik dan persuasif.`
-      );
-    }
-
-    const productId = parts[1].toLowerCase();
-
-    this.logInfo(adminId, `Generating description for product: ${productId}`);
-
-    const result = await this.aiHandler.generateProductDescription(productId);
-
-    if (!result.success) {
-      return `❌ ${result.error}`;
-    }
-
-    // Format the generated description
-    let response = `🤖 *AI GENERATED DESCRIPTION*\n\n`;
-    response += `📦 Product: ${result.productName}\n\n`;
-
-    if (result.generated.title) {
-      response += `*Title:*\n${result.generated.title}\n\n`;
-    }
-
-    if (result.generated.description) {
-      response += `*Description:*\n${result.generated.description}\n\n`;
-    }
-
-    if (result.generated.features && result.generated.features.length > 0) {
-      response += `*Features:*\n`;
-      result.generated.features.forEach((feature, i) => {
-        response += `${i + 1}. ${feature}\n`;
-      });
-      response += "\n";
-    }
-
-    if (result.generated.cta) {
-      response += `*Call to Action:*\n${result.generated.cta}\n\n`;
-    }
-
-    if (result.generated.raw) {
-      response += `${result.generated.raw}\n\n`;
-    }
-
-    response += `---\n\n`;
-    response += `💡 Copy deskripsi di atas dan gunakan untuk update product catalog.`;
-
-    return response;
-  }
-
-  // Inventory management methods moved to AdminInventoryHandler
-  // Promo code methods moved to AdminPromoHandler
-
-  /**
-   * /refreshproducts - Reload products from products_data/ folder
-   */
-  handleRefreshProducts(adminId) {
-    try {
-      const productsConfig = require("../config/products.config");
-      const DynamicProductLoader = productsConfig.DynamicProductLoader;
-
-      // Scan for new products
-      const productFiles = DynamicProductLoader.scanProductFiles();
-      const oldProducts = productsConfig.getAllProducts();
-      const oldCount = oldProducts.length;
-
-      // Refresh products
-      productsConfig.refreshProducts();
-      const newProducts = productsConfig.getAllProducts();
-      const newCount = newProducts.length;
-
-      // Find added/removed products
-      const oldIds = new Set(oldProducts.map((p) => p.id));
-      const newIds = new Set(newProducts.map((p) => p.id));
-
-      const added = newProducts.filter((p) => !oldIds.has(p.id));
-      const removed = oldProducts.filter((p) => !newIds.has(p.id));
-
-      let response = "🔄 *Products Refreshed*\n\n";
-      response += `📦 *Total Products:* ${newCount}\n`;
-      response += `📊 *Change:* ${oldCount} → ${newCount} (${newCount - oldCount >= 0 ? "+" : ""}${newCount - oldCount})\n\n`;
-
-      if (added.length > 0) {
-        response += `✅ *Added (${added.length}):*\n`;
-        added.forEach((p) => {
-          response += `• ${p.id} - ${p.name}\n`;
-        });
-        response += "\n";
-      }
-
-      if (removed.length > 0) {
-        response += `❌ *Removed (${removed.length}):*\n`;
-        removed.forEach((p) => {
-          response += `• ${p.id} - ${p.name}\n`;
-        });
-        response += "\n";
-      }
-
-      if (added.length === 0 && removed.length === 0) {
-        response += `✅ No changes detected\n\n`;
-      }
-
-      response += `📁 *Files Scanned:* ${productFiles.length}\n`;
-      response += `⏰ *Updated:* ${new Date().toLocaleString("id-ID")}`;
-
-      this.log(adminId, "products_refreshed", {
-        oldCount,
-        newCount,
-        added: added.length,
-        removed: removed.length,
-      });
-
-      return response;
-    } catch (error) {
-      this.logError(adminId, error, { action: "refresh_products" });
-      return `❌ *Error Refreshing Products*\n\n${error.message}`;
-    }
-  }
-
-  /**
-   * Show admin help menu
-   */
   showAdminHelp() {
     let message = "👨‍💼 *ADMIN COMMAND REFERENCE*\n\n";
     message += "Gunakan /help untuk melihat pesan ini\n";
@@ -676,12 +620,14 @@ class AdminHandler extends BaseHandler {
     message +=
       "• /broadcast <message> - Kirim pesan ke semua customer aktif\n\n";
 
-    message += "📊 *Analytics & Stats* (2 commands)\n";
+    message += "📊 *Analytics & Stats* (3 commands)\n";
     message += "• /stats [days] - Dashboard analytics (default: 30 hari)\n";
+    message += "• /paymentstats [days] - Statistik metode payment (NEW!)\n";
     message += "• /status - Status sistem (RAM, uptime, Redis, logs)\n\n";
 
-    message += "🏷️ *Product Management* (6 commands)\n";
+    message += "🏷️ *Product Management* (7 commands)\n";
     message += "• /stock [id] [qty] - Lihat/update stock produk\n";
+    message += "• /newproduct <id> <name> <price> - Quick create (NEW!)\n";
     message += "• /addproduct <id|name|price|desc|cat> - Tambah produk baru\n";
     message += "• /editproduct <id> <field> <value> - Edit produk\n";
     message += "• /removeproduct <product-id> - Hapus produk\n";
@@ -710,7 +656,7 @@ class AdminHandler extends BaseHandler {
     message += "• /settings [key] [value] - Kelola pengaturan bot\n\n";
 
     message += "━━━━━━━━━━━━━━━━━━\n";
-    message += "📝 *Total: 23 Admin Commands*\n\n";
+    message += "📝 *Total: 25 Admin Commands* (+ 2 NEW!)\n\n";
     message += "💡 Tips:\n";
     message += "• Semua command dimulai dengan /\n";
     message += "• Parameter <wajib> | [opsional]\n";

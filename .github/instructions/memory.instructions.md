@@ -106,6 +106,10 @@ applyTo: '**'
 applyTo: '**'
 ---
 
+---
+applyTo: '**'
+---
+
 <memories hint="Manage via memory tool">
 <memory path="/memories/ai-fallback-implementation.md">
 # AI Fallback Implementation Progress
@@ -887,8 +891,8 @@ chmod +x .git/hooks/pre-commit
 1. ✅ Install pre-commit hook (DONE)
 2. ✅ Backup script (DONE)
 3. ✅ Update .env.example (DONE)
-4. 🔄 Stock alert system (IN PROGRESS)
-5. ⏳ Auto-refresh file watcher (pending)
+4. ✅ Stock alert system (DONE - committed)
+5. 🔄 Auto-refresh file watcher (IN PROGRESS)
 6. ⏳ Payment analytics (pending)
 7. ⏳ Product template generator (pending)
 8. ⏳ Update documentation (pending)

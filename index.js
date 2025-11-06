@@ -33,16 +33,136 @@ if (process.env.XENDIT_SECRET_KEY) {
 
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
+const chokidar = require("chokidar");
 const SessionManager = require("./sessionManager");
 const ChatbotLogic = require("./chatbotLogic");
 const MessageRouter = require("./lib/messageRouter");
 const WebhookServer = require("./services/webhookServer");
 const logRotationManager = require("./lib/logRotationManager");
 const PaymentReminderService = require("./src/services/payment/PaymentReminderService");
+const productsConfig = require("./src/config/products.config");
 
 // Initialize components
 const sessionManager = new SessionManager();
 const chatbotLogic = new ChatbotLogic(sessionManager);
+
+/**
+ * Setup auto-refresh products when files change
+ * Watches products_data/*.txt for add/change/delete
+ */
+function setupProductAutoRefresh(whatsappClient) {
+  console.log("📁 Setting up product auto-refresh...");
+  
+  // Watch products_data folder for .txt files
+  const watcher = chokidar.watch("products_data/*.txt", {
+    ignored: /sold\//,  // Ignore sold folder
+    persistent: true,
+    ignoreInitial: true, // Don't trigger on startup
+    awaitWriteFinish: {
+      stabilityThreshold: 2000,
+      pollInterval: 100
+    }
+  });
+
+  // Handle file added
+  watcher.on("add", async (path) => {
+    const filename = path.split("/").pop().replace(".txt", "");
+    console.log(`📦 New product file detected: ${filename}`);
+    
+    try {
+      // Refresh products
+      productsConfig.refreshProducts();
+      
+      // Notify admin
+      const adminNumbers = [
+        process.env.ADMIN_NUMBER_1,
+        process.env.ADMIN_NUMBER_2,
+        process.env.ADMIN_NUMBER_3,
+      ].filter(Boolean);
+      
+      if (adminNumbers.length > 0) {
+        const message = `🆕 *Product Auto-Added*\n\n` +
+                       `Product: ${filename}\n` +
+                       `File: ${path}\n\n` +
+                       `Products auto-refreshed!\n` +
+                       `Use /stock to view inventory.`;
+        
+        for (const adminNumber of adminNumbers) {
+          try {
+            await whatsappClient.sendMessage(adminNumber, message);
+          } catch (error) {
+            console.error(`Failed to notify ${adminNumber}:`, error.message);
+          }
+        }
+      }
+      
+      console.log(`✅ Product ${filename} auto-added`);
+    } catch (error) {
+      console.error(`❌ Failed to auto-add product ${filename}:`, error.message);
+    }
+  });
+
+  // Handle file changed
+  watcher.on("change", (path) => {
+    const filename = path.split("/").pop().replace(".txt", "");
+    console.log(`📝 Product file updated: ${filename}`);
+    
+    try {
+      // Refresh products (stock updated)
+      productsConfig.refreshProducts();
+      console.log(`✅ Product ${filename} stock updated`);
+    } catch (error) {
+      console.error(`❌ Failed to update product ${filename}:`, error.message);
+    }
+  });
+
+  // Handle file deleted
+  watcher.on("unlink", async (path) => {
+    const filename = path.split("/").pop().replace(".txt", "");
+    console.log(`🗑️  Product file deleted: ${filename}`);
+    
+    try {
+      // Refresh products
+      productsConfig.refreshProducts();
+      
+      // Notify admin
+      const adminNumbers = [
+        process.env.ADMIN_NUMBER_1,
+        process.env.ADMIN_NUMBER_2,
+        process.env.ADMIN_NUMBER_3,
+      ].filter(Boolean);
+      
+      if (adminNumbers.length > 0) {
+        const message = `⚠️ *Product Removed*\n\n` +
+                       `Product: ${filename}\n` +
+                       `File deleted: ${path}\n\n` +
+                       `Products auto-refreshed!`;
+        
+        for (const adminNumber of adminNumbers) {
+          try {
+            await whatsappClient.sendMessage(adminNumber, message);
+          } catch (error) {
+            console.error(`Failed to notify ${adminNumber}:`, error.message);
+          }
+        }
+      }
+      
+      console.log(`✅ Product ${filename} removed from catalog`);
+    } catch (error) {
+      console.error(`❌ Failed to remove product ${filename}:`, error.message);
+    }
+  });
+
+  // Handle watcher errors
+  watcher.on("error", (error) => {
+    console.error("❌ File watcher error:", error);
+  });
+
+  console.log("✅ Product auto-refresh enabled");
+  console.log("📁 Watching: products_data/*.txt");
+  
+  return watcher;
+}
 
 // Pairing code configuration
 const usePairingCode = process.env.USE_PAIRING_CODE === "true";
@@ -195,6 +315,9 @@ client.on("ready", () => {
     sessionManager.cleanupRateLimits();
     console.log("🧹 Cleaned up expired rate limit data");
   }, 5 * 60 * 1000);
+
+  // Auto-refresh products on file change (NEW!)
+  setupProductAutoRefresh(client);
 });
 
 // Event: Message (delegated to MessageRouter)
