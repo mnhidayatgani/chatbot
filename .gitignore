@@ -43,3 +43,58 @@ Thumbs.db
 *.tmp
 *.temp
 .wwebjs_auth.backup_*
+
+# Coverage reports (exclude from commits to prevent CI/CD failures)
+coverage/
+.nyc_output/
+*.lcov
+
+# Test artifacts
+test-results/
+.test-cache/
+
+# Product credentials (CRITICAL: never commit!)
+products_data/*.txt
+!products_data/README.md
+!products_data/products.json
+
+# Sold products archive
+products_data/sold/
+
+# PM2 process files
+.pm2/
+pids/
+*.pid
+
+# Build artifacts
+dist/
+build/
+
+# Database dumps
+*.sql
+*.db
+*.sqlite
+
+# Backup files
+*.bak
+*.backup
+backup-*/
+
+# Redis dumps
+dump.rdb
+
+# Session data (prevent accidental commits)
+data/*.json
+!data/.gitkeep
+
+# Large files that could fail CI/CD
+*.mp4
+*.mov
+*.avi
+*.zip
+*.tar.gz
+*.rar
+
+# VSCode workspace state (can cause conflicts)
+.vscode/.ropeproject/
+.vscode/settings.local.json

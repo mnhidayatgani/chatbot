@@ -1,28 +1,72 @@
 # WhatsApp Shopping Chatbot Assistant 🛍️
 
+![CI/CD](https://github.com/angga13142/chatbkt/workflows/CI%2FCD%20Pipeline/badge.svg)
+![Tests](https://github.com/angga13142/chatbkt/workflows/Lint%20and%20Test/badge.svg)
+![Version](https://img.shields.io/badge/version-3.0-blue.svg)
+![Node](https://img.shields.io/badge/node-18%2B-green.svg)
+
 A professional WhatsApp chatbot designed to help you serve customers with the fastest possible response times. Perfect for selling premium accounts and virtual credit cards at affordable prices.
 
 ## 🌟 Features
 
+### Core Features
+
 - ⚡ **Fast Response**: Instant automated replies to customer inquiries
-- 🛒 **Shopping Cart**: Full shopping cart functionality
-- 📦 **Product Catalog**: Manages premium accounts and virtual credit cards
+- 🛒 **Shopping Cart**: Full shopping cart functionality with promo code support
+- 📦 **Dynamic Product Catalog**: Auto-discovers products from folder (NEW!)
+- 💳 **Dynamic Payment Menu**: Auto-hides disabled payment methods (NEW!)
 - 💬 **Interactive Menu**: Easy-to-use menu system
 - 👥 **Multi-Customer Support**: Handles multiple customers simultaneously
 - 🔄 **Session Management**: Keeps track of each customer's shopping session
-- 🤖 **AI-Powered Fallback**: Gemini 2.5 Flash Lite for typo correction, Q&A, and smart recommendations
 - 💾 **Lightweight**: Optimized for VPS with 1 vCPU and 2GB RAM
 - 🔐 **Secure**: Uses WhatsApp's end-to-end encryption
 
-### ✨ NEW: AI Features
+### ✨ NEW: AI Features (Gemini 2.5 Flash)
 
 - **Typo Correction**: Automatically fixes customer typos ("netflx" → "netflix")
 - **Product Q&A**: Answers customer questions about products naturally
 - **Smart Recommendations**: AI-powered personalized product suggestions
+- **Intent Classification**: 8 intent types (product_qa, comparison, pricing, etc.)
+- **Spam Detection**: Filters irrelevant messages automatically
 - **Admin AI Generator**: `/generate-desc` command to create compelling product descriptions
-- **Cost-Effective**: ~$0.00005 per call, 97% cheaper than GPT-4o
+- **Cost-Effective**: ~$0.000002 per call, 99.8% cheaper than GPT-4o
 
 See [docs/AI_INTEGRATION.md](docs/AI_INTEGRATION.md) for detailed AI documentation.
+
+### 🆕 Dynamic Systems (November 2025)
+
+**1. Dynamic Product Discovery**
+
+- Auto-loads products from `products_data/` folder
+- No code changes needed for new products
+- Hot reload via `/refreshproducts` command
+- Optional custom metadata in `products.json`
+- Stock count from file lines (realtime)
+
+**2. Dynamic Payment Menu**
+
+- Auto-hides payment methods without credentials
+- Configure via `.env` only
+- Shows only enabled methods (e.g., 1-3 instead of 1-6)
+- No hardcoded menus
+
+See [DOCUMENTATION.md](DOCUMENTATION.md) for complete guide.
+
+### Customer Features
+
+✅ Wishlist/Favorites - Save products for later  
+✅ Product Reviews - Rate and review products  
+✅ Order Tracking - Track payment & delivery status  
+✅ Promo Codes - Apply discount codes  
+✅ Multiple Payment Methods - QRIS, E-wallets, Bank Transfer
+
+### Admin Features
+
+✅ 23 Admin Commands - Full control via WhatsApp  
+✅ Analytics Dashboard - Sales, revenue, customer insights  
+✅ Inventory Management - Stock tracking, bulk operations  
+✅ Promo Management - Create, track, delete promos  
+✅ Review Moderation - View and manage reviews
 
 ## 📦 Products Included
 
