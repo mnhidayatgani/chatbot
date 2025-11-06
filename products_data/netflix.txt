@@ -1,6 +1,17 @@
-netflix5@example.com:password102
-netflix6@example.com:password103
-netflix7@example.com:password104
-netflix8@example.com:password105
-netflix9@example.com:password106
-netflix10@example.com:password107
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Netflix Premium Account Stock
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# Format: email:password
+# Example: user@gmail.com:SecurePass123
+#
+# Instructions:
+# 1. Add one account per line
+# 2. Use format: email:password
+# 3. No spaces before or after the colon
+# 4. Comment lines start with #
+#
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Add real Netflix accounts below (one per line):
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+

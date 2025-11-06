@@ -1,9 +1,11 @@
-spotify2@example.com:spotpass2
-spotify3@example.com:spotpass3
-spotify4@example.com:spotpass4
-spotify5@example.com:spotpass5
-spotify6@example.com:spotpass6
-spotify7@example.com:spotpass7
-spotify8@example.com:spotpass8
-spotify9@example.com:spotpass9
-spotify10@example.com:spotpass10
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Spotify Premium Account Stock
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# Format: email:password
+# Example: user@gmail.com:SecurePass123
+#
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Add real Spotify accounts below:
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+

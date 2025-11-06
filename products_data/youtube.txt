@@ -1,5 +1,11 @@
-youtube1@example.com:ytpass1
-youtube2@example.com:ytpass2
-youtube3@example.com:ytpass3
-youtube4@example.com:ytpass4
-youtube5@example.com:ytpass5
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# YouTube Premium Account Stock
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# Format: email:password
+# Example: user@gmail.com:SecurePass123
+#
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Add real YouTube Premium accounts below:
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
