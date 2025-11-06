@@ -36,6 +36,7 @@
 **A:** Itu hanya informasi balance VCC, **bukan harga**!
 
 **Contoh:**
+
 - Nama produk: "Virtual Card Basic ($10)" ← Info balance
 - Harga: Rp 15.800 ← Ini yang dibayar customer
 
@@ -58,18 +59,22 @@
 **A:** Ada 2 cara:
 
 **Cara 1 - Satu per satu:**
+
 ```
 /addstock netflix premium@netflix.com:Pass123!
 /addstock spotify music@domain.com:Spotify456!
 ```
 
 **Cara 2 - Banyak sekaligus:**
+
 ```
 /addstock-bulk netflix
 ```
+
 Lalu kirim list akun (satu per baris), ketik `done` kalau selesai.
 
 **Format yang diterima:**
+
 - `email:password` ✅
 - `email|password` ✅
 - `email,password` ✅
@@ -83,6 +88,7 @@ Lalu kirim list akun (satu per baris), ketik `done` kalau selesai.
 **A:** Ketik `/stockreport`
 
 **Output:**
+
 ```
 📊 LAPORAN STOK
 
@@ -94,6 +100,7 @@ Lalu kirim list akun (satu per baris), ketik `done` kalau selesai.
 ```
 
 **Legend:**
+
 - 🟢 Stok > 10 (Aman)
 - 🟡 Stok 1-10 (Menipis)
 - 🔴 Stok 0 (Habis)
@@ -105,6 +112,7 @@ Lalu kirim list akun (satu per baris), ketik `done` kalau selesai.
 **A:** **Otomatis!** Sistem menggunakan FIFO (First In First Out).
 
 **Flow:**
+
 1. Customer checkout → Payment approved
 2. Sistem ambil akun pertama dari file
 3. Akun terkirim ke customer
@@ -123,23 +131,29 @@ Lalu kirim list akun (satu per baris), ketik `done` kalau selesai.
 **A:** Format VCC: `CardNumber|CVV|ExpDate`
 
 **Cara 1 - Single VCC:**
+
 ```
 /addstock vcc-basic 4222222222222222|456|01/26
 ```
 
 **Cara 2 - Bulk VCC:**
+
 ```
 /addstock-bulk vcc-basic
 ```
+
 Lalu kirim:
+
 ```
 4222222222222222|456|01/26
 4333333333333333|789|02/26
 5424000000000015|123|12/25
 ```
+
 Ketik `done`
 
 **Format wajib:**
+
 - Nomor kartu: 16 digit
 - CVV: 3 digit
 - Expiry: MM/YY
@@ -151,10 +165,10 @@ Ketik `done`
 
 **A:** Perbedaan ada di **balance** VCC:
 
-| Product ID | Nama | Balance | Harga | File |
-|------------|------|---------|-------|------|
-| `vcc-basic` | Virtual Card Basic | $10 | Rp 15.800 | `vcc-basic.txt` |
-| `vcc-standard` | Virtual Card Standard | $25 | Rp 15.800 | `vcc-standard.txt` |
+| Product ID     | Nama                  | Balance | Harga     | File               |
+| -------------- | --------------------- | ------- | --------- | ------------------ |
+| `vcc-basic`    | Virtual Card Basic    | $10     | Rp 15.800 | `vcc-basic.txt`    |
+| `vcc-standard` | Virtual Card Standard | $25     | Rp 15.800 | `vcc-standard.txt` |
 
 **Tips:** Pisahkan file berdasarkan balance agar tidak tertukar!
 
@@ -165,6 +179,7 @@ Ketik `done`
 **A:** Hapus VCC lama, input VCC baru.
 
 **Opsi 1 - Via WhatsApp:**
+
 ```
 /addstock-bulk vcc-basic
 (kirim list VCC baru)
@@ -172,6 +187,7 @@ done
 ```
 
 **Opsi 2 - Via SSH:**
+
 ```bash
 nano products_data/vcc-basic.txt
 # Edit/hapus yang expired
@@ -189,17 +205,20 @@ nano products_data/vcc-basic.txt
 **A:** Ada 3 kategori:
 
 **1. QRIS (Otomatis via Xendit)**
+
 - QR code unik per order
 - Payment terverifikasi otomatis
 - Produk terkirim otomatis
 
 **2. E-Wallet (Manual)**
+
 - DANA
 - OVO
 - GoPay
 - ShopeePay
 
 **3. Bank Transfer (Manual)**
+
 - BCA
 - BNI
 - BRI
@@ -216,11 +235,13 @@ nano products_data/vcc-basic.txt
 **A:** Ketik `/approve <orderId>`
 
 **Contoh:**
+
 ```
 /approve ORD-1730123456789-c.us
 ```
 
 **Flow:**
+
 1. Customer transfer → upload bukti
 2. Admin cek bukti transfer
 3. Admin ketik `/approve ORD-xxx`
@@ -234,18 +255,20 @@ nano products_data/vcc-basic.txt
 **A:** Ketik `/paymentstats [days]`
 
 **Contoh:**
+
 ```
 /paymentstats          # 7 hari terakhir
 /paymentstats 30       # 30 hari terakhir
 ```
 
 **Output:**
+
 ```
 💳 PAYMENT ANALYTICS (7 hari)
 
 📊 Payment Method Usage:
 1. QRIS        45% (127 orders)
-2. DANA        28% (79 orders)  
+2. DANA        28% (79 orders)
 
 💰 Revenue by Method:
 QRIS     ████████████ Rp 675.000 (53%)
@@ -264,25 +287,30 @@ DANA     ██████       Rp 350.000 (27%)
 **A:** Ada **25+ commands**. Yang paling sering dipakai:
 
 **Inventory:**
+
 - `/stockreport` - Cek stok semua produk
 - `/addstock <id> <credentials>` - Tambah 1 akun
 - `/addstock-bulk <id>` - Tambah banyak akun
 - `/salesreport [days]` - Laporan penjualan
 
 **Orders:**
+
 - `/approve <orderId>` - Approve payment manual
 - `/orders` - Lihat semua pending orders
 - `/broadcast <message>` - Broadcast ke semua customer
 
 **Analytics:**
+
 - `/stats [days]` - Dashboard analytics
 - `/paymentstats [days]` - Payment analytics
 
 **Product Management:**
+
 - `/newproduct <id> <name> <price>` - Quick create product
 - `/refreshproducts` - Refresh product catalog
 
 **System:**
+
 - `/settings <key> <value>` - Update settings
 - `/help` - Lihat semua commands
 
@@ -295,17 +323,20 @@ DANA     ██████       Rp 350.000 (27%)
 **A:** Ketik `/newproduct <id> <name> <price>`
 
 **Contoh:**
+
 ```
 /newproduct canva-pro "Canva Pro" 25000
 ```
 
 **Sistem akan:**
+
 1. ✅ Auto-create file `products_data/canva-pro.txt`
 2. ✅ Auto-detect category (premium/vcc)
 3. ✅ Auto-refresh catalog
 4. ✅ Produk langsung muncul di menu
 
 **Lalu input akun:**
+
 ```
 /addstock-bulk canva-pro
 (kirim list akun)
@@ -319,18 +350,22 @@ done
 **A:** Kemungkinan nomor Anda **belum jadi admin**.
 
 **Solusi:**
+
 1. Edit file `.env`:
+
 ```bash
 ADMIN_NUMBER_1=6281234567890
 ADMIN_NUMBER_2=6289876543210  # Tambah nomor baru di sini
 ```
 
 2. Restart bot:
+
 ```bash
 pm2 restart whatsapp-bot
 ```
 
 3. Test command:
+
 ```
 /stats
 ```
@@ -346,12 +381,14 @@ pm2 restart whatsapp-bot
 **Kemungkinan penyebab & solusi:**
 
 **1. Bot mati**
+
 ```bash
 pm2 status whatsapp-bot
 pm2 restart whatsapp-bot
 ```
 
 **2. WhatsApp session expired**
+
 ```bash
 pm2 logs whatsapp-bot
 # Cek ada error "Session expired"
@@ -359,10 +396,12 @@ pm2 logs whatsapp-bot
 ```
 
 **3. Rate limit tercapai**
+
 - Customer kirim terlalu banyak pesan (>20/menit)
 - Tunggu 1 menit, coba lagi
 
 **4. Maintenance mode aktif**
+
 ```bash
 # Cek di .env
 MAINTENANCE_MODE=false
@@ -375,27 +414,32 @@ MAINTENANCE_MODE=false
 **Troubleshooting:**
 
 **1. Cek order status**
+
 ```
 /orders
 ```
 
 **2. Cek stok**
+
 ```
 /stockreport
 ```
 
 **3. Cek file produk**
+
 ```bash
 cat products_data/netflix.txt
 # Harus ada akun
 ```
 
 **4. Manual delivery**
+
 ```
 /approve <orderId>
 ```
 
 **5. Cek logs**
+
 ```bash
 pm2 logs whatsapp-bot --lines 50
 ```
@@ -407,6 +451,7 @@ pm2 logs whatsapp-bot --lines 50
 **A:** Cek format credentials:
 
 **✅ Format BENAR:**
+
 ```
 email@domain.com:Password123!
 email@domain.com|Password123!
@@ -415,6 +460,7 @@ email@domain.com,Password123!
 ```
 
 **❌ Format SALAH:**
+
 ```
 email password              # Tidak ada separator
 email:                      # Tidak ada password
@@ -423,6 +469,7 @@ email@domain.com : pass     # Ada spasi
 ```
 
 **Rules:**
+
 - Minimal 10 karakter total
 - Ada separator: `:` atau `|` atau `,`
 - Tidak ada spasi di awal/akhir
@@ -434,26 +481,31 @@ email@domain.com : pass     # Ada spasi
 **A:** Langkah debugging:
 
 **1. Cek error message**
+
 ```bash
 npm test 2>&1 | grep "FAIL"
 ```
 
 **2. Run specific test**
+
 ```bash
 npm test -- tests/unit/handlers/CustomerHandler.test.js
 ```
 
 **3. Check lint**
+
 ```bash
 npm run lint
 ```
 
 **4. Common fixes:**
+
 - Clear cache: `npm test -- --clearCache`
 - Reinstall: `rm -rf node_modules && npm install`
 - Check Node version: `node -v` (should be 18+)
 
 **5. Pre-commit checks**
+
 ```bash
 npm run check  # Runs lint + test
 ```
@@ -467,6 +519,7 @@ npm run check  # Runs lint + test
 **A:** Backup files berikut secara rutin:
 
 **Critical (Daily):**
+
 ```
 products_data/           # Akun & VCC
 data/orders.json         # Order history
@@ -477,17 +530,20 @@ logs/transactions.log    # Transaction logs
 ```
 
 **Important (Weekly):**
+
 ```
 .wwebjs_auth/           # WhatsApp session
 logs/                   # All logs
 ```
 
 **Auto-backup script:**
+
 ```bash
 bash scripts/backup-daily.sh
 ```
 
 **Restore:**
+
 ```bash
 # Extract backup
 tar -xzf backup-2025-11-06.tar.gz
@@ -503,12 +559,14 @@ cp -r backup/products_data/* products_data/
 **A:** Gunakan command berikut:
 
 **Real-time monitoring:**
+
 ```bash
 pm2 monit              # CPU, memory, logs
 pm2 logs whatsapp-bot  # Live logs
 ```
 
 **Dashboard analytics:**
+
 ```
 /stats               # System overview
 /paymentstats        # Payment analytics
@@ -517,6 +575,7 @@ pm2 logs whatsapp-bot  # Live logs
 ```
 
 **Health check:**
+
 ```bash
 curl http://localhost:3000/health  # Webhook status
 pm2 status                          # Bot status
@@ -549,6 +608,7 @@ pm2 logs whatsapp-bot
 ```
 
 **Rollback jika ada masalah:**
+
 ```bash
 git reset --hard HEAD~1
 pm2 restart whatsapp-bot
@@ -561,6 +621,7 @@ pm2 restart whatsapp-bot
 **A:** Target: **99%+ pass rate**
 
 **Current status:**
+
 ```
 Tests:       1182/1188 passing (99.5%)
 Test Suites: 39/40 passing
@@ -568,11 +629,13 @@ Lint:        0 errors
 ```
 
 **Pre-push requirement:**
+
 ```bash
 npm run check  # Must pass before git push
 ```
 
 **CI/CD blocks jika:**
+
 - ❌ Lint errors > 0
 - ❌ File size > 700 lines (in src/)
 - ❌ Hardcoded secrets detected
@@ -585,17 +648,20 @@ npm run check  # Must pass before git push
 **A:** **Opsional**, tapi sangat direkomendasikan untuk production.
 
 **Tanpa Redis:**
+
 - ✅ Stok di memory (restart = reset)
 - ✅ Session di memory (restart = hilang)
 - ❌ Tidak ada persistence
 
 **Dengan Redis:**
+
 - ✅ Stok persisted (restart = tetap ada)
 - ✅ Session persisted
 - ✅ Better performance
 - ✅ Distributed system ready
 
 **Install Redis:**
+
 ```bash
 # Ubuntu/Debian
 sudo apt install redis-server
@@ -609,6 +675,7 @@ redis-cli ping  # Should return: PONG
 ```
 
 **Konfigurasi di .env:**
+
 ```bash
 REDIS_URL=redis://localhost:6379
 ```
@@ -624,12 +691,14 @@ ADMIN_NUMBER_1=6285345902520
 ```
 
 **Bot akan kirim notifikasi untuk:**
+
 - ✅ Task completion
 - ✅ Low stock alerts
 - ✅ System errors
 - ✅ Payment confirmations
 
 **Test notification:**
+
 ```bash
 node -e "
   require('dotenv').config();
@@ -643,17 +712,18 @@ node -e "
 
 **Dokumentasi lengkap tersedia di folder `docs/`:**
 
-| File | Topik |
-|------|-------|
-| `ADMIN_COMMANDS.md` | Semua admin commands |
+| File                 | Topik                        |
+| -------------------- | ---------------------------- |
+| `ADMIN_COMMANDS.md`  | Semua admin commands         |
 | `CARA_INPUT_AKUN.md` | Cara input akun via WhatsApp |
-| `PAYMENT_SYSTEM.md` | Payment integration guide |
-| `AI_INTEGRATION.md` | AI fallback system |
-| `TESTING_GUIDE.md` | Testing best practices |
-| `DEPLOYMENT.md` | VPS deployment guide |
-| `ARCHITECTURE.md` | System architecture |
+| `PAYMENT_SYSTEM.md`  | Payment integration guide    |
+| `AI_INTEGRATION.md`  | AI fallback system           |
+| `TESTING_GUIDE.md`   | Testing best practices       |
+| `DEPLOYMENT.md`      | VPS deployment guide         |
+| `ARCHITECTURE.md`    | System architecture          |
 
 **GitHub Copilot Instructions:**
+
 - `.github/copilot-instructions.md` - Main index
 - `.github/instructions/*.md` - Modular guides
 
@@ -662,6 +732,7 @@ node -e "
 ## 🆘 Butuh Bantuan?
 
 **Dalam bot:**
+
 ```
 /help         # Lihat semua commands
 menu          # Main menu
@@ -669,10 +740,12 @@ help          # Customer support
 ```
 
 **Dokumentasi:**
+
 - Baca file di folder `docs/`
 - Cek `.github/instructions/`
 
 **Developer:**
+
 - GitHub Issues
 - Contact admin
 
