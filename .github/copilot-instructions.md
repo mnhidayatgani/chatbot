@@ -21,11 +21,17 @@ This file is the **main index**. Detailed instructions are split into focused fi
 
 **[PRIORITY PROTOCOL - OVERRIDES ALL OTHER INSTRUCTIONS]**
 
+0. **🧠 MEMORY PROTOCOL (FIRST!)** - At session start, ALWAYS check:
+   - `.github/memory/INDEX.md` - Memory overview & quick lookup
+   - `/memories/` - Agent memory extension files (auto-loaded)
+   - `.github/memory/implementations/` - Recent implementations
+   - `.github/memory/current-state.md` - Current project status
+   - `.github/memory/github-workflows-rules.md` - CI/CD requirements
 1. **ULTRA-CONCISE RESPONSES** - Main chat responses MUST be brief bullet points only. NO fluff, NO intro/outro, NO apologies. Straight to the point.
 2. **MANDATORY DOCUMENTATION** - For EVERY response, create detailed documentation file (.md) with full explanations, code diffs, context. End response with: `Detail lengkap disimpan di: [filename.md]`
 3. **Test Framework is Jest** - Use `describe()`, `test()`, `expect()` for all new tests (not Mocha)
 4. **Reference memory** - Check `.github/memory/` for project context and previous decisions
-5. **Document in memory** - Update memory with implementation summaries, not user-facing responses
+5. **Document in memory** - Update memory with implementation summaries, not user-facing responses (use `memory` tool)
 6. **CHECK WORKFLOWS BEFORE PUSH** - Read `.github/memory/github-workflows-rules.md` for CI/CD requirements
 7. **FEATURE DOCUMENTATION MANDATORY** - Follow two-stage workflow: Plan → Implement → Summary (see [Development Workflow](instructions/development-workflow.md#feature-documentation-workflow-mandatory))
 
@@ -233,6 +239,129 @@ See [Gotchas](instructions/gotchas.md) for full list and solutions.
 
 ---
 
+## 🧠 Memory Management Protocol
+
+### At Session Start (MANDATORY)
+
+**ALWAYS check these files FIRST (in order):**
+
+1. **`.github/memory/INDEX.md`** - Quick overview of all memory
+2. **`.github/memory/current-state.md`** - Current project status
+3. **`.github/memory/implementations/`** - Recent implementations
+4. **`/memories/`** - Auto-loaded by agent-memory extension
+
+### Memory Organization
+
+```
+.github/memory/
+├── INDEX.md                    ← Start here!
+├── current-state.md           ← Project status
+├── implementations/           ← Technical implementations
+│   ├── one-click-deployment-system.md
+│   ├── dynamic-payment-implementation.md
+│   └── dynamic-product-implementation.md
+├── decisions/                 ← Architecture decisions
+│   ├── pricing-system-migration.md
+│   └── protocol-update-summary.md
+├── issues/                    ← Bugs & troubleshooting
+│   └── critical-bugs-pitfalls.md
+└── archive/                   ← Completed/outdated
+```
+
+### When to Update Memory
+
+**After Major Implementation:**
+
+```bash
+# 1. Create implementation file
+/memories/feature-name-implementation.md
+
+# 2. Update INDEX.md
+Add to "Recent Implementations" section
+
+# 3. Update current-state.md
+Reflect new capabilities
+```
+
+**After Bug Fix:**
+
+```bash
+# Document in issues/
+.github/memory/issues/bug-description.md
+
+# Include:
+- Problem description
+- Root cause
+- Fix applied
+- Test added
+```
+
+**After Architecture Decision:**
+
+```bash
+# Document in decisions/
+.github/memory/decisions/decision-name.md
+
+# Include:
+- Context & problem
+- Options considered
+- Decision & rationale
+- Consequences
+```
+
+### Memory Tools Available
+
+1. **Agent Memory Extension** (`digitarald.agent-memory-0.1.66`)
+
+   - Auto-loads `/memories/` at session start
+   - Use `@memory` tool to update
+   - Persistent across sessions
+
+2. **Git-based Memory** (`.github/memory/`)
+   - Version controlled
+   - Shared with team
+   - Manual updates via file edits
+
+### Memory Naming Convention
+
+```
+Format: [category]-[topic]-[date].md
+
+Examples:
+✅ implementations/one-click-deployment-nov6-2025.md
+✅ decisions/architecture-refactor-nov1-2025.md
+✅ issues/payment-webhook-bug-nov3-2025.md
+
+Avoid:
+❌ implementation.md (too generic)
+❌ feature1.md (unclear)
+❌ notes.md (no context)
+```
+
+### Quick Memory Lookup
+
+| Need Info About... | Check File                                                         |
+| ------------------ | ------------------------------------------------------------------ |
+| Recent work        | `.github/memory/INDEX.md`                                          |
+| Current features   | `.github/memory/current-state.md`                                  |
+| Deployment         | `/memories/one-click-deployment-system.md`                         |
+| Payment system     | `.github/memory/implementations/dynamic-payment-implementation.md` |
+| Known bugs         | `.github/memory/issues/critical-bugs-pitfalls.md`                  |
+| CI/CD rules        | `.github/memory/github-workflows-rules.md`                         |
+| Test status        | `.github/memory/test-status.md`                                    |
+
+### Memory Update Checklist
+
+After implementing new feature:
+
+- [ ] Create implementation file in `/memories/` or `.github/memory/implementations/`
+- [ ] Update `.github/memory/INDEX.md`
+- [ ] Update `.github/memory/current-state.md` if needed
+- [ ] Add links to related docs
+- [ ] Commit memory files to git
+
+---
+
 **Last Updated:** November 6, 2025  
-**Version:** 3.0 (Modular Documentation)  
-**Total Lines:** Reduced from 664 → ~180 (main file)
+**Version:** 3.1 (Added Memory Protocol)  
+**Total Lines:** ~280 (main file)
