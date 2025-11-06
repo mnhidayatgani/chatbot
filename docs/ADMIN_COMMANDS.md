@@ -83,7 +83,7 @@ BCA_ENABLED=true
 **Catatan:**
 
 - ID harus unik (tidak boleh sama dengan produk lain)
-- Harga dalam USD
+- Harga dalam IDR (Rupiah)
 - Stok harus angka >= 0
 
 ---
@@ -101,7 +101,7 @@ BCA_ENABLED=true
 **Field yang bisa diedit:**
 
 - `name` - Nama produk
-- `price` - Harga (USD)
+- `price` - Harga (IDR)
 - `description` - Deskripsi
 
 **Contoh:**
@@ -313,14 +313,6 @@ OVO      ██           $7.00  (6%)
 
 **Kategori Settings:**
 
-**� Currency & Pricing:**
-
-- `usdToIdrRate` - Kurs USD ke IDR
-
-```
-/settings usdToIdrRate 16000
-```
-
 **⏱️ Session & Rate Limit:**
 
 - `sessionTimeout` - Timeout session dalam menit
@@ -461,17 +453,12 @@ Menampilkan:
    - ✅ `netflix-hd`, `spotify-premium`, `vcc-basic`
    - ❌ `prod1`, `test123`, `xyz`
 
-2. **Set harga dalam USD (akan dikonversi ke IDR otomatis)**
-
-   - 1 USD = Rp 15.800 (default)
-   - Bisa diubah di `.env`: `USD_TO_IDR_RATE=16000`
-
-3. **Deskripsi harus informatif**
+2. **Deskripsi harus informatif**
 
    - ✅ "Full HD streaming, 4 screens, offline download"
    - ❌ "Netflix account"
 
-4. **Monitor stok secara berkala**
+3. **Monitor stok secara berkala**
    - Gunakan `/stock` setiap pagi
    - Set alert ketika stok < 5
 

@@ -123,7 +123,6 @@ describe('TransactionLogger', () => {
 
       expect(logData.event).toBe('order_created');
       expect(logData.orderId).toBe(orderId);
-      expect(logData.totalUSD).toBe(80);
       expect(logData.totalIDR).toBe(1200000);
     });
 

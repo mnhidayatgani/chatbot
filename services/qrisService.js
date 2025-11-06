@@ -164,16 +164,6 @@ class QRISService {
       error: "Payment not confirmed after retries",
     };
   }
-
-  /**
-   * Convert USD to IDR (approximate rate)
-   * @param {number} usd
-   * @returns {number} IDR amount
-   */
-  convertToIDR(usd) {
-    const rate = parseInt(process.env.USD_TO_IDR_RATE || "15000");
-    return Math.round(usd * rate);
-  }
 }
 
 module.exports = QRISService;

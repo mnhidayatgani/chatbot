@@ -13,9 +13,8 @@ describe('config.js (Legacy Wrapper)', () => {
     });
 
     test('should include currency settings', () => {
-      expect(config.systemSettings.usdToIdrRate).toBeDefined();
       expect(config.systemSettings.currency).toBeDefined();
-      expect(typeof config.systemSettings.usdToIdrRate).toBe('number');
+      expect(config.systemSettings.currency).toBe('IDR');
     });
 
     test('should include session settings', () => {

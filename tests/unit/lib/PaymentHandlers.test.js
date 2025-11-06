@@ -89,8 +89,7 @@ describe('PaymentHandlers', () => {
         accountNumber: '8808012345678901',
         bankCode: 'BCA',
         expiryDate: new Date(Date.now() + 86400000).toISOString()
-      }),
-      convertToIDR: jest.fn((usd) => usd * 15000)
+      })
     };
 
     // Mock SessionManager
@@ -548,18 +547,6 @@ describe('PaymentHandlers', () => {
       expect(session.paymentMethod).toBe('bank_bca');
       expect(session.paymentAccount).toBe('1234567890');
       expect(session.paymentStatus).toBe('awaiting_proof');
-    });
-
-    test('should convert USD to IDR correctly', async () => {
-      mockSessionManager.getSession.mockResolvedValue({
-        customerId,
-        cart: [{ id: 'netflix', name: 'Netflix', price: 10 }], // $10
-        orderId
-      });
-
-      await handler.handleBankChoice(customerId, 'bca');
-
-      expect(mockXenditService.convertToIDR).toHaveBeenCalledWith(10);
     });
 
     test('should log bank transfer transaction', async () => {

@@ -17,7 +17,6 @@ const stockManager = new RedisStockManager();
 // Re-export system settings (flatten for backward compatibility)
 const systemSettings = {
   // Currency
-  usdToIdrRate: appConfig.currency.usdToIdrRate,
   currency: appConfig.currency.default,
 
   // Session
@@ -119,7 +118,6 @@ function removeProduct(productId) {
 // Update setting (modify in-memory only, doesn't persist)
 function updateSetting(key, value) {
   const validSettings = [
-    "usdToIdrRate",
     "sessionTimeout",
     "maxMessagesPerMinute",
     "shopName",
@@ -143,7 +141,6 @@ function updateSetting(key, value) {
   // Type conversion
   if (
     [
-      "usdToIdrRate",
       "sessionTimeout",
       "maxMessagesPerMinute",
       "lowStockThreshold",

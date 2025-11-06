@@ -6,8 +6,7 @@
 module.exports = {
   // Currency settings
   currency: {
-    usdToIdrRate: parseInt(process.env.USD_TO_IDR_RATE) || 15800,
-    default: "IDR",
+    default: "IDR", // Rupiah - all prices are in IDR
   },
 
   // Session settings

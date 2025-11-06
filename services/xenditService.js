@@ -14,18 +14,8 @@ class XenditService {
       secretKey: process.env.XENDIT_SECRET_KEY,
     });
 
-    // Rate conversion USD to IDR
-    this.usdToIdrRate = parseFloat(process.env.USD_TO_IDR_RATE || "15800");
-
     // Payment QR code storage directory
     this.qrDir = path.join(__dirname, "payment_qris");
-  }
-
-  /**
-   * Convert USD to IDR
-   */
-  convertToIDR(usdAmount) {
-    return Math.ceil(usdAmount * this.usdToIdrRate);
   }
 
   /**

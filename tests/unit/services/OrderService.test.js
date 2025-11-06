@@ -37,7 +37,6 @@ describe("OrderService", () => {
           orderId: "ORD-001",
           timestamp: "2025-11-05T10:00:00.000Z",
           items: [{ name: "Netflix Premium", price: 50000 }],
-          totalUSD: 5,
           totalIDR: 50000,
           paymentMethod: "QRIS",
           status: "completed",
@@ -46,7 +45,6 @@ describe("OrderService", () => {
           orderId: "ORD-002",
           timestamp: "2025-11-04T15:30:00.000Z",
           items: [{ name: "Spotify Premium", price: 30000 }],
-          totalUSD: 3,
           totalIDR: 30000,
           paymentMethod: "Bank Transfer",
           status: "pending",
@@ -66,7 +64,6 @@ describe("OrderService", () => {
       expect(result).toHaveLength(2);
       expect(result[0]).toMatchObject({
         orderId: "ORD-001",
-        totalUSD: 5,
         totalIDR: 50000,
         paymentMethod: "QRIS",
       });
@@ -109,7 +106,6 @@ describe("OrderService", () => {
           orderId: "ORD-001",
           timestamp: "2025-11-05T10:00:00.000Z",
           items: [],
-          totalUSD: 5,
           totalIDR: 50000,
           status: "completed",
         },
@@ -117,7 +113,6 @@ describe("OrderService", () => {
           orderId: "ORD-002",
           timestamp: "2025-11-04T15:30:00.000Z",
           items: [],
-          totalUSD: 3,
           totalIDR: 30000,
           status: "pending",
         },
@@ -125,7 +120,6 @@ describe("OrderService", () => {
           orderId: "ORD-003",
           timestamp: "2025-11-03T12:00:00.000Z",
           items: [],
-          totalUSD: 7,
           totalIDR: 70000,
           status: "completed",
         },
@@ -214,7 +208,6 @@ describe("OrderService", () => {
           orderId: "ORD-001",
           timestamp: "2025-11-05T10:00:00.000Z",
           items: [{ name: "Netflix Premium", price: 50000 }],
-          totalUSD: 5,
           totalIDR: 50000,
           status: "completed",
         },
@@ -222,7 +215,6 @@ describe("OrderService", () => {
           orderId: "ORD-002",
           timestamp: "2025-11-04T15:30:00.000Z",
           items: [{ name: "Spotify Premium", price: 30000 }],
-          totalUSD: 3,
           totalIDR: 30000,
           status: "pending",
         },
@@ -236,7 +228,7 @@ describe("OrderService", () => {
       // Assert
       expect(result).toBeDefined();
       expect(result.orderId).toBe("ORD-001");
-      expect(result.totalUSD).toBe(5);
+      expect(result.totalIDR).toBe(50000);
       expect(result.items).toHaveLength(1);
     });
 
