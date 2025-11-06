@@ -19,12 +19,15 @@ This file is the **main index**. Detailed instructions are split into focused fi
 
 ### Critical Rules (Read First)
 
-1. **Keep responses concise** - Save detailed summaries to agent memory instead of long replies
-2. **Test Framework is Jest** - Use `describe()`, `test()`, `expect()` for all new tests (not Mocha)
-3. **Reference memory** - Check `.github/memory/` for project context and previous decisions
-4. **Document in memory** - Update memory with implementation summaries, not user-facing responses
-5. **CHECK WORKFLOWS BEFORE PUSH** - Read `.github/memory/github-workflows-rules.md` for CI/CD requirements
-6. **FEATURE DOCUMENTATION MANDATORY** - Follow two-stage workflow: Plan → Implement → Summary (see [Development Workflow](instructions/development-workflow.md#feature-documentation-workflow-mandatory))
+**[PRIORITY PROTOCOL - OVERRIDES ALL OTHER INSTRUCTIONS]**
+
+1. **ULTRA-CONCISE RESPONSES** - Main chat responses MUST be brief bullet points only. NO fluff, NO intro/outro, NO apologies. Straight to the point.
+2. **MANDATORY DOCUMENTATION** - For EVERY response, create detailed documentation file (.md) with full explanations, code diffs, context. End response with: `Detail lengkap disimpan di: [filename.md]`
+3. **Test Framework is Jest** - Use `describe()`, `test()`, `expect()` for all new tests (not Mocha)
+4. **Reference memory** - Check `.github/memory/` for project context and previous decisions
+5. **Document in memory** - Update memory with implementation summaries, not user-facing responses
+6. **CHECK WORKFLOWS BEFORE PUSH** - Read `.github/memory/github-workflows-rules.md` for CI/CD requirements
+7. **FEATURE DOCUMENTATION MANDATORY** - Follow two-stage workflow: Plan → Implement → Summary (see [Development Workflow](instructions/development-workflow.md#feature-documentation-workflow-mandatory))
 
 ### GitHub Actions Rules (MUST FOLLOW)
 
