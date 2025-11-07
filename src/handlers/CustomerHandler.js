@@ -178,7 +178,7 @@ class CustomerHandler extends BaseHandler {
       `[CustomerHandler] handleMenuSelection() - Message: "${message}"`
     );
 
-    if (message === "1" || message === "browse" || message === "products") {
+    if (message === "1" || message === "browse" || message === "belanja" || message === "products" || message === "jelajah") {
       console.log(`[CustomerHandler] Setting step to BROWSING...`);
       await this.setStep(customerId, SessionSteps.BROWSING);
       console.log(
