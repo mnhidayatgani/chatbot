@@ -63,6 +63,15 @@ const paymentConfig = {
     webhookUrl: process.env.WEBHOOK_URL || "",
     callbackToken: process.env.XENDIT_WEBHOOK_TOKEN || "",
   },
+
+  // QRIS Manual (Static QR Code)
+  qris_manual: {
+    enabled: process.env.QRIS_MANUAL_ENABLED === "true" && 
+             !!process.env.QRIS_MANUAL_IMAGE,
+    name: process.env.QRIS_MANUAL_NAME || "QRIS",
+    imagePath: process.env.QRIS_MANUAL_IMAGE || "",
+    type: "manual", // vs 'auto' for Xendit
+  },
 };
 
 /**
@@ -71,13 +80,25 @@ const paymentConfig = {
 paymentConfig.getAvailablePayments = function () {
   const available = [];
 
-  // QRIS always available if Xendit configured
+  // QRIS Auto (Xendit)
   if (this.xendit.enabled) {
     available.push({
       id: "qris",
-      name: "QRIS",
-      description: "Universal QR (semua e-wallet & bank)",
+      name: "QRIS (Auto)",
+      description: "Universal QR - Verifikasi otomatis",
       emoji: "📱",
+      type: "auto",
+    });
+  }
+
+  // QRIS Manual (Static QR)
+  if (this.qris_manual.enabled) {
+    available.push({
+      id: "qris_manual",
+      name: "QRIS (Manual)",
+      description: "Scan & upload bukti bayar",
+      emoji: "�",
+      type: "manual",
     });
   }
 

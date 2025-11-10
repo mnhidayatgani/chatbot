@@ -146,6 +146,10 @@ applyTo: '**'
 applyTo: '**'
 ---
 
+---
+applyTo: '**'
+---
+
 <memories hint="Manage via memory tool">
 <memory path="/memories/ai-fallback-implementation.md">
 # AI Fallback Implementation Progress
@@ -1592,6 +1596,283 @@ su - chatbot -c "cd $BOT_DIR && npm install puppeteer-core@18.2.1"
 
 **Testing Time:** 15 minutes  
 **Overall Status:** ✅ Production ready for sales!
+
+</memory>
+
+<memory path="/memories/production-safety-mock-data-cleanup.md">
+# Production Safety: Mock Data Cleanup - Nov 6, 2025
+
+## 🚨 Critical Issue Discovered
+
+**Date:** November 6, 2025, 19:30
+**Status:** ✅ RESOLVED
+**Severity:** CRITICAL (Production Blocker)
+
+---
+
+## Problem Statement
+
+While preparing for production deployment, discovered that ALL product files still contained **dummy/mock data**:
+
+```
+❌ netflix.txt:  netflix5@example.com:password102
+❌ spotify.txt:  spotify2@example.com:spotpass2
+❌ disney.txt:   disney2@example.com:dispass2
+❌ youtube.txt:  youtube1@example.com:ytpass1
+❌ vcc-basic.txt: 4222222222222222|456|01/26
+❌ vcc-standard.txt: 5222222222222222|222|04/26
+```
+
+### Risk if Deployed:
+1. Customer purchases product
+2. Receives fake account (e.g., `netflix5@example.com`)
+3. Cannot login
+4. Requests refund
+5. **Reputation damage**
+
+---
+
+## Solution Implemented
+
+**Approach:** Opsi 1 - Clean Templates (Production-Safe)
+
+### What Was Done:
+
+1. **Backup Created**
+   ```
+   Location: products_data/mock_backup/
+   Files: All 6 .txt files preserved
+   Purpose: Reference for format/testing
+   ```
+
+2. **Clean Templates Created**
+   - All product files replaced with templates
+   - Format instructions included
+   - Example formats provided
+   - Comments explain usage
+   - **0 real accounts/cards**
+
+3. **Template Structure**
+   ```
+   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   # [Product Name] Stock
+   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   #
+   # Format: email:password (or card|cvv|expiry for VCC)
+   # Example: user@gmail.com:SecurePass123
+   #
+   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   # Add real accounts below:
+   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   
+   [Empty - ready for real data]
+   ```
+
+---
+
+## Files Modified
+
+### Products Data (6 files):
+- `products_data/netflix.txt` - Clean template
+- `products_data/spotify.txt` - Clean template
+- `products_data/disney.txt` - Clean template
+- `products_data/youtube.txt` - Clean template
+- `products_data/vcc-basic.txt` - Clean template
+- `products_data/vcc-standard.txt` - Clean template
+
+### Backup Created (6 files):
+- `products_data/mock_backup/*.txt` - All original mock data
+
+### Git Commit:
+```
+Commit: a2120a9
+Message: 🧹 feat: clean mock data + create production-ready templates
+Files: 13 changed (+157, -32)
+```
+
+---
+
+## Production Status
+
+### ✅ Safe to Deploy:
+- No dummy data in any file
+- Templates ready for real accounts
+- Zero customer risk
+- Development can continue
+
+### Bot Behavior:
+When stock is empty (0 accounts in file):
+```
+Customer: "Saya mau beli Netflix"
+Bot: "⚠️ Maaf, produk sedang kosong. Silakan hubungi admin."
+```
+
+### Admin Can Add Anytime:
+```bash
+# Add real account:
+echo "realuser@gmail.com:SecurePass123" >> products_data/netflix.txt
+
+# Bot auto-detects (file watcher active)
+# No restart needed
+```
+
+---
+
+## Key Decisions
+
+### Why Opsi 1 (Templates Only)?
+
+**Rejected Opsi 2 (Validation):**
+- Still has dummy data in files
+- Risk if validation fails
+- Cleanup needed anyway
+
+**Rejected Opsi 3 (Real Accounts Now):**
+- Requires purchasing accounts first
+- Not needed for deployment
+- Can add incrementally
+
+**Chose Opsi 1 because:**
+- ✅ Safest approach
+- ✅ Clean codebase
+- ✅ Flexible for development
+- ✅ No immediate cost
+- ✅ Production-ready NOW
+
+---
+
+## Next Steps for Admin
+
+### When Ready to Sell:
+
+1. **Read Documentation:**
+   ```
+   docs/CARA_INPUT_AKUN.md
+   ```
+
+2. **Add Real Accounts:**
+   ```bash
+   # Premium Accounts (email:password)
+   echo "user@gmail.com:Pass123" >> products_data/netflix.txt
+   
+   # VCC Cards (card|cvv|expiry)
+   echo "4111111111111111|123|12/25" >> products_data/vcc-basic.txt
+   ```
+
+3. **Verify Stock:**
+   ```bash
+   # Check how many accounts available
+   grep -v "^#" products_data/netflix.txt | grep -v "^$" | wc -l
+   ```
+
+4. **Bot Auto-Detects:**
+   - File watcher active
+   - No restart needed
+   - New stock immediately available
+
+---
+
+## Testing Recommendations
+
+### Before Adding Real Accounts:
+
+1. **Test with 1 dummy first:**
+   ```bash
+   echo "test@test.com:test123" >> products_data/netflix.txt
+   ```
+
+2. **Buy product via bot**
+3. **Verify delivery works**
+4. **Check `products_data/sold/` folder**
+5. **Confirm account moved correctly**
+6. **Delete dummy from sold/**
+
+### After Confirming System Works:
+
+1. Add real accounts
+2. Test with real purchase
+3. Monitor logs
+4. Check customer satisfaction
+
+---
+
+## Related Files
+
+### Documentation:
+- `docs/CARA_INPUT_AKUN.md` - Instructions for adding accounts
+- `products_data/README.md` - Format specifications
+
+### Code:
+- `services/productDelivery.js` - Handles account delivery
+- `src/services/product/ProductService.js` - Stock management
+- `index.js` - File watcher for auto-refresh
+
+### Memory:
+- `.github/memory/implementations/one-click-deployment-system.md`
+- This file
+
+---
+
+## Lessons Learned
+
+### What Went Well:
+✅ Caught critical issue before production
+✅ Clean solution implemented quickly
+✅ Backup preserved for reference
+✅ Production-safe approach chosen
+
+### What Could Be Better:
+⚠️ Should have checked earlier in development
+⚠️ Need automated check for dummy data in CI/CD
+⚠️ Memory system should track production-readiness
+
+### Action Items:
+- [ ] Add CI/CD check for `@example.com` in product files
+- [ ] Create production deployment checklist
+- [ ] Document "ready for production" criteria
+- [ ] Add validation to prevent dummy data commits
+
+---
+
+## Impact
+
+### Before:
+- ❌ 100% dummy data in all files
+- ❌ Cannot deploy to production safely
+- ❌ High risk of customer complaints
+
+### After:
+- ✅ 0% dummy data (all clean templates)
+- ✅ Safe to deploy to production
+- ✅ Zero risk of fake account delivery
+- ✅ Ready for real accounts when admin decides
+
+### Timeline:
+- Issue discovered: 19:20
+- Solution implemented: 19:30
+- Committed & documented: 19:35
+- **Total time: 15 minutes**
+
+---
+
+## Conclusion
+
+**Status:** Production blocker resolved ✅
+
+The chatbot is now **safe to deploy to production** without risk of delivering fake accounts to customers. Admin can add real accounts at any time, and the bot will automatically detect and use them.
+
+This was a **critical catch** that prevented potential reputation damage and customer complaints. The clean template approach provides maximum flexibility for ongoing development while maintaining production safety.
+
+**Next Priority:** Push to GitHub, then decide whether to:
+1. Deploy to production (safe now)
+2. Continue development (add features)
+3. Add real accounts and start selling
+
+---
+
+**Updated by:** AI Agent  
+**Date:** November 6, 2025, 19:35  
+**Commit:** a2120a9
 
 </memory>
 
