@@ -47,6 +47,37 @@ const sessionManager = new SessionManager();
 const chatbotLogic = new ChatbotLogic(sessionManager);
 
 /**
+ * Heroku Health Check Server
+ * Required for Heroku to know the app is running
+ */
+const http = require("http");
+const PORT = process.env.PORT || 3000;
+
+const healthCheckServer = http.createServer((req, res) => {
+  if (req.url === "/health" || req.url === "/") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        status: "ok",
+        service: "WhatsApp Shopping Chatbot",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+        memory: process.memoryUsage(),
+        env: process.env.NODE_ENV || "development",
+      })
+    );
+  } else {
+    res.writeHead(404);
+    res.end("Not Found");
+  }
+});
+
+healthCheckServer.listen(PORT, () => {
+  console.log(`✅ Health check server running on port ${PORT}`);
+  console.log(`🔍 Health endpoint: http://localhost:${PORT}/health`);
+});
+
+/**
  * Setup auto-refresh products when files change
  * Watches products_data/*.txt for add/change/delete
  */

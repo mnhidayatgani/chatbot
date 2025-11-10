@@ -1,0 +1,98 @@
+{
+  "name": "WhatsApp Shopping Chatbot",
+  "description": "Automated WhatsApp shopping bot with QRIS payment, product delivery, and admin dashboard",
+  "keywords": [
+    "whatsapp",
+    "chatbot",
+    "ecommerce",
+    "shopping",
+    "bot",
+    "nodejs",
+    "automation"
+  ],
+  "website": "https://github.com/mnhidayatgani/chatbot",
+  "repository": "https://github.com/mnhidayatgani/chatbot",
+  "logo": "https://cdn-icons-png.flaticon.com/512/733/733585.png",
+  "success_url": "/health",
+  "buildpacks": [
+    {
+      "url": "https://github.com/jontewks/puppeteer-heroku-buildpack"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-redis:mini",
+      "as": "REDIS"
+    },
+    {
+      "plan": "heroku-postgresql:essential-0",
+      "as": "DATABASE"
+    }
+  ],
+  "env": {
+    "BOT_NAME": {
+      "description": "Name of your bot",
+      "value": "JARVIS"
+    },
+    "SHOP_NAME": {
+      "description": "Name of your shop",
+      "value": "Toko Voucher ID"
+    },
+    "USE_PAIRING_CODE": {
+      "description": "Use pairing code instead of QR code",
+      "value": "true"
+    },
+    "PAIRING_PHONE_NUMBER": {
+      "description": "Phone number for pairing (format: 6281234567890)",
+      "required": true
+    },
+    "ADMIN_NUMBER": {
+      "description": "Admin WhatsApp number",
+      "required": true
+    },
+    "CONTACT_EMAIL": {
+      "description": "Contact email for support",
+      "value": "support@example.com"
+    },
+    "CONTACT_WHATSAPP": {
+      "description": "Contact WhatsApp number",
+      "required": true
+    },
+    "QRIS_MANUAL_ENABLED": {
+      "description": "Enable QRIS Manual payment",
+      "value": "true"
+    },
+    "QRIS_MANUAL_NAME": {
+      "description": "QRIS Manual payment name",
+      "value": "Toko Voucher ID"
+    },
+    "CLOUDINARY_CLOUD_NAME": {
+      "description": "Cloudinary cloud name (for media storage)",
+      "required": false
+    },
+    "CLOUDINARY_API_KEY": {
+      "description": "Cloudinary API key",
+      "required": false
+    },
+    "CLOUDINARY_API_SECRET": {
+      "description": "Cloudinary API secret",
+      "required": false
+    },
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production"
+    }
+  },
+  "scripts": {
+    "postdeploy": "node scripts/setup-heroku.js"
+  }
+}

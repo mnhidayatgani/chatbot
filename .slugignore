@@ -1,0 +1,51 @@
+# Files to exclude from Heroku slug (reduce deployment size)
+
+# Tests
+
+test/
+tests/
+_.test.js
+_.spec.js
+coverage/
+
+# Documentation
+
+docs/
+\*.md
+!README.md
+
+# Development files
+
+.github/
+.git/
+.gitignore
+.eslintrc*
+.prettierrc*
+eslint.config.js
+
+# Archives
+
+archive/
+_.zip
+_.tar.gz
+
+# Logs (will be in Papertrail)
+
+logs/
+\*.log
+
+# Build artifacts
+
+.DS_Store
+.vscode/
+.idea/
+
+# Temporary files
+
+tmp/
+temp/
+\*.tmp
+
+# Test QRIS file (will use Cloudinary)
+
+test-qris-manual.js
