@@ -1,18 +1,41 @@
 const fs = require("fs");
 const path = require("path");
+const DatabaseService = require("../lib/databaseService");
 
 class ProductDelivery {
   constructor() {
     this.productsDataDir = "./products_data";
     this.deliveryLogFile = "./delivery.log";
+    this.dbService = new DatabaseService();
   }
 
   /**
-   * Get product credentials from database
+   * Get product credentials from database or file
    * @param {string} productId - Product ID
-   * @returns {Object|null} Credentials or null if not available
+   * @returns {Promise<Object|null>} Credentials or null if not available
    */
-  getProductCredentials(productId) {
+  async getProductCredentials(productId) {
+    // Try database first
+    if (this.dbService.isEnabled()) {
+      try {
+        const result = await this.dbService.getAvailableCredential(productId);
+        if (result) {
+          return result; // {credentialId, credential}
+        }
+        // If no result from DB, fall through to file-based
+      } catch (error) {
+        console.error("❌ Database error, falling back to file:", error.message);
+      }
+    }
+
+    // Fallback to file-based system
+    return this._getCredentialsFromFile(productId);
+  }
+
+  /**
+   * Fallback: Get credentials from file
+   */
+  _getCredentialsFromFile(productId) {
     try {
       const filepath = path.join(this.productsDataDir, `${productId}.txt`);
 
@@ -93,15 +116,14 @@ class ProductDelivery {
    * @param {string} customerId - Customer WhatsApp ID
    * @param {string} orderId - Order ID
    * @param {Array} cart - Cart items
-   * @returns {Object} Delivery result
+   * @returns {Promise<Object>} Delivery result
    */
   async deliverProducts(customerId, orderId, cart) {
     const deliveredProducts = [];
     const failedProducts = [];
-    const { decrementStock } = require("../config");
 
     for (const item of cart) {
-      const credentials = this.getProductCredentials(item.id);
+      const credentials = await this.getProductCredentials(item.id);
 
       if (credentials) {
         deliveredProducts.push({
@@ -109,26 +131,24 @@ class ProductDelivery {
           credentials: credentials,
         });
 
-        // Decrement stock (realtime with Redis)
-        try {
-          const stockResult = await decrementStock(item.id, 1, orderId);
-          if (stockResult.success) {
-            console.log(
-              `✅ Stock decremented for ${item.id}: ${stockResult.newStock} remaining`
+        // Mark as sold in database (if enabled)
+        if (this.dbService.isEnabled() && credentials.credentialId) {
+          try {
+            await this.dbService.markAsSold(
+              credentials.credentialId,
+              orderId,
+              customerId
             );
-          } else {
-            console.warn(
-              `⚠️ Stock decrement failed for ${item.id}: ${stockResult.message}`
-            );
+            console.log(`✅ Credential ${credentials.credentialId} marked as sold in DB`);
+          } catch (error) {
+            console.error(`❌ Error marking as sold:`, error.message);
           }
-        } catch (error) {
-          console.error(`❌ Error decrementing stock for ${item.id}:`, error);
         }
 
-        // Archive to sales ledger
+        // Archive to sales ledger (file-based backup)
         this.archiveToSalesLedger(
           item.id,
-          credentials.raw,
+          credentials.raw || credentials.credential,
           orderId,
           customerId
         );
