@@ -93,6 +93,6 @@
     }
   },
   "scripts": {
-    "postdeploy": "node scripts/setup-heroku.js"
+    "postdeploy": "psql $DATABASE_URL < scripts/schema.sql && node scripts/setup-heroku.js && node scripts/migrate-to-postgres.js"
   }
 }
