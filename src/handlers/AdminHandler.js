@@ -65,6 +65,8 @@ class AdminHandler extends BaseHandler {
 
       "/approve": (adminId, msg) =>
         this.orderHandler.handleApprove(adminId, msg),
+      "/reject": (adminId, msg) =>
+        this.orderHandler.handleReject(adminId, msg),
       "/broadcast": (adminId, msg) =>
         this.orderHandler.handleBroadcast(adminId, msg),
 
@@ -615,8 +617,9 @@ class AdminHandler extends BaseHandler {
     message += "Gunakan /help untuk melihat pesan ini\n";
     message += "━━━━━━━━━━━━━━━━━━\n\n";
 
-    message += "📦 *Order & Communication* (2 commands)\n";
+    message += "📦 *Order & Communication* (3 commands)\n";
     message += "• /approve <order-id> - Setujui pembayaran & kirim produk\n";
+    message += "• /reject <order-id> [alasan] - Tolak pembayaran\n";
     message +=
       "• /broadcast <message> - Kirim pesan ke semua customer aktif\n\n";
 

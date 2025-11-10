@@ -161,6 +161,60 @@ class AdminOrderHandler extends BaseHandler {
       broadcastMessage: `📢 *Pengumuman*\n\n${broadcastMessage}`,
     };
   }
+
+  /**
+   * Handle payment rejection
+   * @param {string} adminId - Admin WhatsApp ID
+   * @param {string} message - Original message from admin
+   * @returns {string} Confirmation message
+   */
+  async handleReject(adminId, message) {
+    const parts = message.split(" ");
+    if (parts.length < 2) {
+      return "❌ *Format Salah*\n\nGunakan: /reject <order-id> [alasan]\n\nContoh: /reject ORD-123 Nominal tidak sesuai";
+    }
+
+    const orderId = parts[1];
+    const reason = parts.slice(2).join(" ") || "Pembayaran ditolak oleh admin";
+    
+    const customerId = await this.sessionManager.findCustomerByOrderId(orderId);
+
+    if (!customerId) {
+      return UIMessages.orderNotFound(orderId);
+    }
+
+    const step = await this.getStep(customerId);
+    if (step !== "awaiting_admin_approval" && step !== "awaiting_payment_proof") {
+      return `❌ *Order Tidak Dalam Status Approval*\n\nOrder: ${orderId}\nStatus: ${step}\n\nHanya order dengan status pending approval yang bisa direject.`;
+    }
+
+    // Get order info
+    const cart = await this.sessionManager.getCart(customerId);
+    const totalIDR = cart.reduce((sum, item) => sum + item.price, 0);
+
+    // Reset customer session to checkout
+    await this.sessionManager.setStep(customerId, "checkout");
+    await this.sessionManager.setPaymentProof(customerId, null);
+
+    // Notify customer
+    const PaymentMessages = require("../../lib/paymentMessages");
+    const customerMessage = PaymentMessages.paymentProofRejected(orderId, reason);
+
+    // Log rejection
+    this.log(adminId, "payment_rejected", {
+      orderId,
+      customerId,
+      reason,
+      totalIDR,
+    });
+
+    return {
+      message: `✅ *Pembayaran Ditolak*\n\nOrder: ${orderId}\nCustomer: ${customerId.replace("@c.us", "")}\nAlasan: ${reason}\n\n✅ Customer telah diberitahu untuk upload ulang bukti transfer.`,
+      deliverToCustomer: true,
+      customerId: customerId,
+      customerMessage: customerMessage,
+    };
+  }
 }
 
 module.exports = AdminOrderHandler;
