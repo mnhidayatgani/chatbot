@@ -197,7 +197,7 @@ function setupProductAutoRefresh(whatsappClient) {
 
 // Pairing code configuration
 const isHeroku = !!process.env.DYNO; // Detect Heroku environment
-const usePairingCode = process.env.USE_PAIRING_CODE === "true" && !isHeroku; // Disable pairing on Heroku
+const usePairingCode = process.env.USE_PAIRING_CODE === "true"; // Enable pairing everywhere
 const pairingPhoneNumber = process.env.PAIRING_PHONE_NUMBER || "";
 
 // Client configuration
