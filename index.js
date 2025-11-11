@@ -196,7 +196,8 @@ function setupProductAutoRefresh(whatsappClient) {
 }
 
 // Pairing code configuration
-const usePairingCode = process.env.USE_PAIRING_CODE === "true";
+const isHeroku = !!process.env.DYNO; // Detect Heroku environment
+const usePairingCode = process.env.USE_PAIRING_CODE === "true" && !isHeroku; // Disable pairing on Heroku
 const pairingPhoneNumber = process.env.PAIRING_PHONE_NUMBER || "";
 
 // Client configuration
@@ -204,7 +205,7 @@ const clientOptions = {
   authStrategy: new LocalAuth(),
   puppeteer: {
     headless: true,
-    timeout: 60000, // 60 seconds timeout
+    timeout: isHeroku ? 120000 : 60000, // 2 minutes on Heroku, 1 minute locally
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -223,13 +224,22 @@ const clientOptions = {
       "--mute-audio",
       "--no-default-browser-check",
       "--disable-translate",
+      ...(isHeroku ? [
+        "--disable-setuid-sandbox",
+        "--disable-infobars",
+        "--window-position=0,0",
+        "--ignore-certifcate-errors",
+        "--ignore-certifcate-errors-spki-list",
+        "--disable-blink-features=AutomationControlled"
+      ] : [])
     ],
   },
   // Add more specific options for stability
-  qrMaxRetries: 5,
+  qrMaxRetries: isHeroku ? 3 : 5, // Fewer retries on Heroku
+  restartOnAuthFail: true,
 };
 
-// Add pairing code configuration if enabled
+// Add pairing code configuration if enabled (local only)
 if (usePairingCode && pairingPhoneNumber) {
   clientOptions.pairWithPhoneNumber = {
     phoneNumber: pairingPhoneNumber,
@@ -261,10 +271,18 @@ const messageRouter = new MessageRouter(client, sessionManager, chatbotLogic);
     console.log("🚀 Initializing WhatsApp client...");
     console.log("⏱️  This may take 30-60 seconds...");
     
+    if (isHeroku) {
+      console.log("☁️  Running on Heroku - QR code mode enabled");
+      console.log("📱 Check logs for QR code after initialization");
+    }
+    
     // Set a timeout for initialization
     const initTimeout = setTimeout(() => {
       console.warn("⚠️  WhatsApp client initialization taking longer than expected");
       console.warn("💡 This is normal for first-time setup or after session cleanup");
+      if (isHeroku) {
+        console.warn("☁️  Heroku initialization can take 60-90 seconds");
+      }
     }, 30000);
     
     await client.initialize();
