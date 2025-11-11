@@ -1,0 +1,88 @@
+📱 *ADMIN COMMANDS REFERENCE*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 *QUICK COMMANDS*
+
+📦 *PRODUK*
+├ /stock
+├ /stock netflix 50
+├ /newproduct id nama harga
+├ /editproduct id|field|value
+├ /removeproduct id
+└ /refreshproducts
+
+💳 *ORDER*
+└ /approve ORD-xxx
+
+📊 *STATISTIK*
+├ /stats
+├ /stats 30
+├ /paymentstats
+└ /status
+
+📢 *KOMUNIKASI*
+└ /broadcast pesan
+
+⚙️ *SETTINGS*
+├ /settings
+└ /settings key value
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ *CONTOH PENGGUNAAN*
+
+*Tambah Produk:*
+/newproduct youtube "YouTube Premium" 20000
+
+*Update Harga:*
+/editproduct netflix|price|19000
+
+*Approve Order:*
+/approve ORD-1730123456789
+
+*Broadcast Promo:*
+/broadcast 🎉 PROMO SPESIAL!
+Diskon 20% semua produk!
+Kode: PROMO20
+
+*Cek Stats 7 Hari:*
+/stats 7
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚡ *WORKFLOW HARIAN*
+
+*Pagi (09:00):*
+/stock
+/stats
+
+*Siang (12:00):*
+/approve <order_id>
+
+*Malam (21:00):*
+/stats
+/paymentstats
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 *TIPS*
+• Gunakan /stock setiap pagi
+• Approve order max 15 menit
+• Broadcast max 1x per hari
+• Review /stats setiap malam
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 *KATEGORI PRODUK*
+premium = Netflix, Spotify, dll
+vcc = Virtual Credit Card
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🆘 *BANTUAN*
+Ketik command tanpa parameter untuk help
+
+Contoh: /settings (lihat semua)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+v2.0 - WhatsApp Friendly
