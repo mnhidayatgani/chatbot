@@ -1,31 +1,35 @@
 # 📝 Panduan Customisasi Pesan - Centralized Messages System
 
-**Terakhir Update:** November 12, 2025  
-**File Utama:** `lib/messages.config.js`  
+**Terakhir Update:** November 12, 2025 (Refactored - Split to 2 files)  
+**File Utama:** `lib/messages.customer.js` & `lib/messages.admin.js`  
 **Status:** ✅ Production Ready
 
 ---
 
 ## 🎯 Tujuan
 
-SEMUA pesan customer, admin, dan payment sekarang terpusat di **1 file**:  
-📁 `lib/messages.config.js`
+SEMUA pesan customer, admin, dan payment sekarang terpusat di **2 file** (refactored):  
+📁 `lib/messages.customer.js` - Customer & payment messages  
+📁 `lib/messages.admin.js` - Admin messages only
 
-**Keuntungan:**
+**Keuntungan Refactor:**
 
-- ✅ Edit 1 tempat untuk semua pesan
-- ✅ Tidak perlu cari-cari di banyak file
+- ✅ File lebih kecil & mudah dicari (1000 → 700 + 300 lines)
+- ✅ Separation of concerns (customer vs admin)
+- ✅ Tidak perlu scroll panjang
 - ✅ Format konsisten
 - ✅ Multi-language ready
-- ✅ Mudah maintain
+- ✅ Lebih mudah maintain
 
 ---
 
-## 📂 Struktur File
+## 📂 Struktur File (After Refactor)
 
 ```
 lib/
-├── messages.config.js         ← EDIT DI SINI! (1098 lines)
+├── messages.customer.js       ← EDIT customer & payment (1007 lines)
+├── messages.admin.js          ← EDIT admin messages (309 lines)
+├── messages.customer.js         ← Main export (45 lines) - AUTO
 ├── uiMessages.js              ← Proxy (155 lines) - JANGAN EDIT
 ├── paymentMessages.js         ← Proxy (191 lines) - JANGAN EDIT
 └── paymentHandlers.js         ← Logic only
@@ -33,15 +37,18 @@ lib/
 
 **⚠️ PENTING:**
 
-- Edit pesan di: **messages.config.js**
-- JANGAN edit di: uiMessages.js atau paymentMessages.js (proxy only)
+- Edit **customer/payment** pesan di: **messages.customer.js**
+- Edit **admin** pesan di: **messages.admin.js**
+- JANGAN edit: messages.customer.js (auto-export), uiMessages.js, paymentMessages.js
 
 ---
 
-## 🏗️ Struktur messages.config.js
+## 🏗️ Struktur Messages
+
+### 📁 messages.customer.js (1007 lines)
 
 ```javascript
-const Messages = {
+const CustomerMessages = {
   // 💳 Payment Messages (24 functions)
   payment: {
     qris: { auto(), manual() },
@@ -52,7 +59,6 @@ const Messages = {
     status: { pending(), success(), expired(), failed(), awaiting() },
     proof: { received(), invalid(), rejected() },
     error: { generic(), noInvoice(), checkFailed() },
-    adminNotification: { proofUploaded() },
   },
 
   // 🛍️ Customer Messages (30+ functions)
@@ -66,18 +72,6 @@ const Messages = {
     system: { awaitingApproval() },
   },
 
-  // 👨‍💼 Admin Messages (6 functions)
-  admin: {
-    auth: { unauthorized() },
-    order: {
-      approvalFormatInvalid(),
-      notFound(),
-      notPending(),
-      deliveryFailed(),
-      approvalSuccess(),
-    },
-  },
-
   // 🎨 Format Helpers
   format: {
     separator: { short, medium, long },
@@ -89,14 +83,66 @@ const Messages = {
 };
 ```
 
+### 📁 messages.admin.js (309 lines)
+
+```javascript
+const AdminMessages = {
+  // 🔐 Authentication
+  auth: {
+    unauthorized(),
+  },
+
+  // 📦 Order Management
+  order: {
+    approvalFormatInvalid(),
+    notFound(),
+    notPending(),
+    deliveryFailed(),
+    approvalSuccess(),
+  },
+
+  // 🔔 Admin Notifications
+  adminNotification: {
+    newOrder(),
+    proofUploaded(),
+    lowStock(),
+    stockEmpty(),
+    dailyReport(),
+  },
+
+  // 📈 Statistics
+  stats: {
+    help(),
+  },
+};
+```
+
 ---
 
 ## 📖 Cara Customisasi Pesan
 
+### 🎯 Quick Guide: Edit Mana?
+
+| Mau Edit Apa?                       | File                   | Contoh                       |
+| ----------------------------------- | ---------------------- | ---------------------------- |
+| Payment messages (QRIS, bank, etc.) | `messages.customer.js` | "Transfer ke rekening..."    |
+| Customer UI (menu, cart, wishlist)  | `messages.customer.js` | "Selamat datang di..."       |
+| Admin notifications                 | `messages.admin.js`    | "Order baru!", "Stock habis" |
+| Admin commands response             | `messages.admin.js`    | "/approve success"           |
+| Format helpers (emoji, currency)    | `messages.customer.js` | Currency format, box         |
+
+**💡 Tips:**
+
+- 95% edit akan di `messages.customer.js` (payment & UI)
+- `messages.admin.js` hanya untuk admin internal messages
+- Gunakan Ctrl+F untuk cari pesan yang mau diedit
+
+---
+
 ### 1️⃣ Edit Greeting Main Menu
 
-**File:** `lib/messages.config.js`  
-**Lokasi:** Baris ~537
+**File:** `lib/messages.customer.js`  
+**Lokasi:** Search "main menu" (Ctrl+F)
 
 ```javascript
 // BEFORE:
@@ -215,7 +261,7 @@ simple: (emoji, title) =>
 ### Scenario: Brand Voice Lebih Friendly
 
 ```javascript
-// File: lib/messages.config.js
+// File: lib/messages.customer.js
 
 // 1. Main menu greeting (lebih ramah)
 main: (shopName) =>
@@ -278,15 +324,15 @@ Banyak produk keren menanti! ✨
 **1. Backup dulu (opsional)**
 
 ```bash
-cp lib/messages.config.js lib/messages.config.js.backup
+cp lib/messages.customer.js lib/messages.customer.js.backup
 ```
 
 **2. Edit file**
 
 ```bash
-nano lib/messages.config.js
+nano lib/messages.customer.js
 # atau
-code lib/messages.config.js  # VS Code
+code lib/messages.customer.js  # VS Code
 ```
 
 **3. Cari pesan yang mau diubah**
@@ -424,7 +470,7 @@ Messages.format.box.simple("🎁", "PROMO");
 | QRIS Auto         | ~39            | `payment.qris.auto()`         |
 | Bank Transfer     | ~235           | `payment.bank.manual()`       |
 
-**Full list:** Lihat di `lib/messages.config.js` (sudah ada comment di tiap function)
+**Full list:** Lihat di `lib/messages.customer.js` (sudah ada comment di tiap function)
 
 ---
 
@@ -436,7 +482,7 @@ Messages.format.box.simple("🎁", "PROMO");
 
 ```bash
 # 1. Pastikan file sudah save
-cat lib/messages.config.js | grep "teks yang diubah"
+cat lib/messages.customer.js | grep "teks yang diubah"
 
 # 2. Restart bot
 pm2 restart whatsapp-bot
@@ -456,7 +502,7 @@ pm2 flush whatsapp-bot
 npm run lint
 
 # 2. Restore backup jika ada
-cp lib/messages.config.js.backup lib/messages.config.js
+cp lib/messages.customer.js.backup lib/messages.customer.js
 
 # 3. Restart bot
 pm2 restart whatsapp-bot
@@ -470,7 +516,7 @@ pm2 restart whatsapp-bot
 
 ```javascript
 // ❌ SALAH:
-`Produk: ${produkName}`// ✅ BENAR: // Typo: produkName
+`Produk: ${produkName}` // ✅ BENAR: // Typo: produkName
 `Produk: ${productName}`; // Sesuai parameter
 ```
 
@@ -480,7 +526,7 @@ pm2 restart whatsapp-bot
 
 **November 12, 2025:**
 
-- ✅ Semua pesan dipindah ke messages.config.js
+- ✅ Semua pesan dipindah ke messages.customer.js
 - ✅ uiMessages.js & paymentMessages.js jadi proxy
 - ✅ Header box format compact (emoji + title)
 - ✅ 60+ message functions centralized
@@ -489,7 +535,7 @@ pm2 restart whatsapp-bot
 **Stats:**
 
 - Before: 1273 lines across 3 files
-- After: 1098 lines in 1 file (messages.config.js)
+- After: 1098 lines in 1 file (messages.customer.js)
 - Reduction: ~62% in proxy files
 
 ---
@@ -499,7 +545,7 @@ pm2 restart whatsapp-bot
 1. **Backup sebelum edit besar**
 
    ```bash
-   cp lib/messages.config.js lib/messages.config.js.$(date +%Y%m%d)
+   cp lib/messages.customer.js lib/messages.customer.js.$(date +%Y%m%d)
    ```
 
 2. **Edit bertahap, test per section**
@@ -533,13 +579,13 @@ pm2 restart whatsapp-bot
 **Butuh bantuan?**
 
 - Check dokumentasi: `docs/`
-- Check code examples di messages.config.js
+- Check code examples di messages.customer.js
 - Test dengan `npm start` di local
 - Restore backup jika error
 
 **File penting:**
 
-- `lib/messages.config.js` - EDIT DI SINI
+- `lib/messages.customer.js` - EDIT DI SINI
 - `lib/uiMessages.js` - Proxy only
 - `lib/paymentMessages.js` - Proxy only
 - `.backup/` - Backup files
